@@ -8,6 +8,8 @@ const LEFT = 3
 const LINE = 0
 const CORNER = 1
 const T = 2
+// játékosok
+const PLAYERS = ['red', 'blue', 'green', 'purple']
 
 // kezdőképernyő - új játék, leírás
 function startScreen() {
@@ -48,7 +50,9 @@ function startScreen() {
     // btnStartGame
     const btnStartGame = document.createElement('button')
     btnStartGame.innerHTML = "Játék indítása"
-    btnStartGame.addEventListener('click', startGame)
+    btnStartGame.addEventListener('click', (event) => {
+        startGame(inputPlayers.value, inputNumberCards.value)
+    })
     divSettings.appendChild(btnStartGame);
 
     // leírás
@@ -96,6 +100,10 @@ class Room {
 
         this.rot = `rotate(${rot * 90}deg)`
     }
+
+    setGold(playerId) {
+        this.gold = playerId;
+    }
 }
 
 let arrRooms = [
@@ -121,7 +129,7 @@ let arrRooms = [
     new Room(6, 4, T, DOWN),
 ]
 
-function startGame() {
+function startGame(players, numberCards) {
     // div, jó sok divvel
     game.innerHTML = ""
     const board = document.createElement('div')
@@ -133,7 +141,6 @@ function startGame() {
         row.classList.add('row')
         for (let j = 0; j < 7; j++) {
             const div = document.createElement('div')
-            //div.style.backgroundColor = 'red'
             div.classList.add('room')
             row.appendChild(div)
         }
@@ -158,6 +165,32 @@ function startGame() {
     divSeparRoom.style.backgroundImage = `url(${arrRooms[arrRooms.length - 1].type.src})`
     divSeparRoom.classList.add('room')
     game.appendChild(divSeparRoom)
+
+    // játékosok rögzítése
+    for (let i = 0; i < players; i++) {
+        const divPlayer = document.createElement('div')
+        divPlayer.classList.add('player')
+        divPlayer.style.backgroundColor = PLAYERS[i]
+        document.querySelectorAll('.row')[arrRooms[i].x].querySelectorAll('.room')[arrRooms[i].y].appendChild(divPlayer)
+    }
+
+    // kincsek kiosztása
+    let playerId = 0;
+    let numberCardsPerPlayer = 0
+    for (let i = 0; i < numberCards; i++) {
+        let rndRoom = random(4, 49)
+        while (arrRooms[rndRoom].gold != undefined) {
+            rndRoom = random(4, 49)
+        }
+        arrRooms[rndRoom].gold = playerId
+
+        if (numberCardsPerPlayer == numberCards / players) {
+            playerId++
+            numberCardsPerPlayer = 0
+        }
+    }
+
+    showGold(0)
 }
 
 function randomRooms() {
@@ -166,9 +199,6 @@ function randomRooms() {
     for (let i = 0; i < 7; i++) {
         for (let j = 0; j < 7; j++) {
             if (getRoom(i, j) == null) {
-                /*do {
-                    var rndType = random(0, 2)
-                } while (types[rndType] != 0)*/
                 let rndType = random(0, 2)
                 while (types[rndType] == 0) {
                     rndType = random(0, 2)
@@ -193,21 +223,15 @@ function getRoom(x, y) {
     return null
 }
 
-/*function includesRoom(arr, x, y) {
-    let includes = false
-    for (let e of arr) {
-        if (e.x == x && e.y == y)
-            includes = true
+function showGold(playerId) {
+    for (let e of arrRooms) {
+        if (e.gold == playerId) {
+            const divGold = document.createElement('div')
+            divGold.classList.add('gold')
+            document.querySelectorAll('.row')[e.x].querySelectorAll('.room')[e.y].appendChild(divGold)
+        }
     }
-    return includes
 }
-
-function randomEven(min, max) {
-    const rnd = Math.floor(Math.random() * (max - min + 1) + min)
-    return rnd % 2 == 1 ? rnd : randomEven(min, max)
-}
-
-*/
 
 
 

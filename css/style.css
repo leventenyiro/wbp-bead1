@@ -32,4 +32,21 @@
   background-size: cover;
   border-radius: 10px;
 }
+
+.player {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.gold {
+  width: 20px;
+  height: 20px;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  border-radius: 5px;
+  background-color: orange;
+  -webkit-box-shadow: 0 0 10px 10px yellow;
+          box-shadow: 0 0 10px 10px yellow;
+}
 /*# sourceMappingURL=style.css.map */
