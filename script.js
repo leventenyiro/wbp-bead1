@@ -138,7 +138,6 @@ function startGame(players, numberCards) {
 
     const board = document.createElement('div')
     board.id = 'board'
-    // ide jönnek majd a panelek
 
     for (let i = 0; i < 7; i++) {
         const row = document.createElement('div')
@@ -194,17 +193,10 @@ function startGame(players, numberCards) {
         }
     }
 
-    // kincsek mutatása - teszt
-    //showGold(0)
-    for (let e of arrRooms) {
-        if (e.gold == playerId) {
-            const divGold = document.createElement('div')
-            divGold.classList.add('gold')
-            board.querySelectorAll('.row')[e.x].querySelectorAll('.room')[e.y].appendChild(divGold)
-        }
-    }
-
     main.appendChild(game)
+
+    // kincsek mutatása - teszt
+    showGold(0)
 
     // játékosinfók - game gyereke lesz
     const info = document.createElement('div')
@@ -242,14 +234,15 @@ function getRoom(x, y) {
     return null
 }
 
-/*function showGold(playerId) {
+function showGold(playerId) {
+    console.log(main.querySelector('#game'))
     for (let e of arrRooms) {
         if (e.gold == playerId) {
             const divGold = document.createElement('div')
             divGold.classList.add('gold')
-            board.querySelectorAll('.row')[e.x].querySelectorAll('.room')[e.y].appendChild(divGold)
+            main.querySelector('#game #board').querySelectorAll('.row')[e.x].querySelectorAll('.room')[e.y].appendChild(divGold)
         }
     }
-}*/
+}
 
 startScreen()
