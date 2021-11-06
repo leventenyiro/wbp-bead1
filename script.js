@@ -13,6 +13,9 @@ const T = 2
 function startScreen() {
     game.innerHTML = ""
     // játékosszám beállítása
+    const divSettings = document.createElement('div')
+    divSettings.id = "settings"
+
     const labelInputPlayers = document.createElement('label')
     labelInputPlayers.innerHTML = "Játékosok száma"
     const inputPlayers = document.createElement('input')
@@ -21,8 +24,8 @@ function startScreen() {
     inputPlayers.max = 4
     inputPlayers.value = 2
     labelInputPlayers.htmlFor = inputPlayers
-    game.appendChild(labelInputPlayers)
-    game.appendChild(inputPlayers)
+    divSettings.appendChild(labelInputPlayers)
+    divSettings.appendChild(inputPlayers)
 
     // játékosokként hány kincskártya beállítása
     const labelInputNumberCards = document.createElement('label')
@@ -32,8 +35,8 @@ function startScreen() {
     inputNumberCards.min = 1
     inputNumberCards.value = 1
     labelInputPlayers.htmlFor = inputNumberCards
-    game.appendChild(labelInputNumberCards)
-    game.appendChild(inputNumberCards)
+    divSettings.appendChild(labelInputNumberCards)
+    divSettings.appendChild(inputNumberCards)
 
     // event
     inputPlayers.addEventListener('change', (e) => {
@@ -46,13 +49,15 @@ function startScreen() {
     const btnStartGame = document.createElement('button')
     btnStartGame.innerHTML = "Játék indítása"
     btnStartGame.addEventListener('click', startGame)
-    game.appendChild(btnStartGame);
+    divSettings.appendChild(btnStartGame);
 
     // leírás
     const btnDesc = document.createElement('button')
     btnDesc.innerHTML = "Leírás"
     btnDesc.addEventListener('click', desc)
-    game.appendChild(btnDesc);
+    divSettings.appendChild(btnDesc);
+
+    game.appendChild(divSettings)
 }
 
 function desc() {
@@ -74,8 +79,45 @@ class Room {
     constructor (x, y, type, rot) {
         this.x = x
         this.y = y
+        switch (type) {
+            case 0:
+                this.type = new Image()
+                this.type.src = 'img/line.png'
+                break;
+            case 1:
+                this.type = new Image()
+                this.type.src = 'img/corner.png'
+                break;
+            case 2:
+                this.type = new Image()
+                this.type.src = 'img/t.png'
+                break;
+        }
     }
 }
+
+const basedRooms = [
+    new Room(0, 0, CORNER, UP),
+    new Room(0, 6, CORNER, RIGHT),
+    new Room(6, 6, CORNER, DOWN),
+    new Room(6, 0, CORNER, LEFT),
+
+    new Room(0, 2, T, UP),
+    new Room(0, 4, T, UP),
+
+    new Room(2, 0, T, LEFT),
+    new Room(2, 2, T, LEFT),
+    new Room(2, 4, T, UP),
+    new Room(2, 6, T, RIGHT),
+
+    new Room(4, 0, T, LEFT),
+    new Room(4, 2, T, DOWN),
+    new Room(4, 4, T, RIGHT),
+    new Room(4, 6, T, RIGHT),
+
+    new Room(6, 2, T, DOWN),
+    new Room(6, 4, T, DOWN),
+]
 
 function startGame() {
     // div, jó sok divvel
@@ -97,31 +139,13 @@ function startGame() {
     game.appendChild(board)
 
     //board = new Room(0, 0, CORNER, rotation)
+    // kártyák behelyettesítése
+    for (let e of basedRooms) {
+        room = document.querySelectorAll('.row')[e.x].querySelectorAll('div')[e.y]
+        room.style.backgroundImage = `url(${e.type.src})`
+    }
 }
 
-const starterBoard = () => {
-    return [
-        new Room(0, 0, CORNER, UP),
-        new Room(0, 6, CORNER, RIGHT),
-        new Room(6, 6, CORNER, DOWN),
-        new Room(6, 0, CORNER, LEFT),
 
-        new Room(2, 0, T, UP),
-        new Room(4, 0, T, UP),
-
-        new Room(2, 2, T, LEFT),
-        new Room(4, 2, T, LEFT),
-        new Room(6, 2, T, UP),
-        new Room(8, 2, T, RIGHT),
-
-        new Room(2, 4, T, LEFT),
-        new Room(4, 4, T, DOWN),
-        new Room(6, 4, T, RIGHT),
-        new Room(8, 4, T, RIGHT),
-
-        new Room(4, 8, T, DOWN),
-        new Room(6, 8, T, DOWN),
-    ]
-}
 
 startScreen()
