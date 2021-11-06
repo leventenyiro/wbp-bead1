@@ -201,7 +201,18 @@ function startGame(players, numberCards) {
     // játékosinfók - game gyereke lesz
     const info = document.createElement('div')
     info.id = 'info'
-
+    
+    const divPlayers = document.createElement('div')
+    for (let i = 0; i < players; i++) {
+        const divPlayer = document.createElement('div');
+        divPlayer.innerHTML = `
+            <h2>Player ${i + 1}</h2>
+            <p>Found</p>
+        `
+        divPlayers.appendChild(divPlayer)
+    }
+    info.appendChild(divPlayers)
+    main.appendChild(info)
 }
 
 function randomRooms() {
