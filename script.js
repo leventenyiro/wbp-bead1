@@ -4,7 +4,7 @@ const UP = 0
 const RIGHT = 1
 const DOWN = 2
 const LEFT = 3
-// szobák
+// szobák típusai
 const LINE = 0
 const CORNER = 1
 const T = 2
@@ -98,7 +98,7 @@ class Room {
     }
 }
 
-const basedRooms = [
+let arrRooms = [
     new Room(0, 0, CORNER, UP),
     new Room(0, 6, CORNER, RIGHT),
     new Room(6, 6, CORNER, DOWN),
@@ -134,20 +134,80 @@ function startGame() {
         for (let j = 0; j < 7; j++) {
             const div = document.createElement('div')
             //div.style.backgroundColor = 'red'
+            div.classList.add('room')
             row.appendChild(div)
         }
         board.appendChild(row)
     }
     game.appendChild(board)
 
-    //board = new Room(0, 0, CORNER, rotation)
+    // random szobák generálása
+    randomRooms()
+
     // kártyák behelyettesítése
-    for (let e of basedRooms) {
-        room = document.querySelectorAll('.row')[e.x].querySelectorAll('div')[e.y]
-        room.style.backgroundImage = `url(${e.type.src})`
-        room.style.transform = e.rot
+    for (let e of arrRooms) {
+        if (e.x != -1) {
+            let room = document.querySelectorAll('.row')[e.x].querySelectorAll('div')[e.y]
+            room.style.backgroundImage = `url(${e.type.src})`
+            room.style.transform = e.rot
+        }
     }
+
+    // amit beilleszthetsz
+    const divSeparRoom = document.createElement('div')
+    divSeparRoom.style.backgroundImage = `url(${arrRooms[arrRooms.length - 1].type.src})`
+    divSeparRoom.classList.add('room')
+    game.appendChild(divSeparRoom)
 }
+
+function randomRooms() {
+    let types = [13, 15, 6]
+    
+    for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < 7; j++) {
+            if (getRoom(i, j) == null) {
+                /*do {
+                    var rndType = random(0, 2)
+                } while (types[rndType] != 0)*/
+                let rndType = random(0, 2)
+                while (types[rndType] == 0) {
+                    rndType = random(0, 2)
+                }
+                arrRooms.push(new Room(i, j, rndType, random(0, 3)))
+                types[rndType]--
+            }
+        }
+    }
+    arrRooms.push(new Room(-1, -1, types.findIndex((e) => e > 0), random(0, 3)))
+}
+
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function getRoom(x, y) {
+    for (let e of arrRooms) {
+        if (e.x === x && e.y === y)
+            return e
+    }
+    return null
+}
+
+/*function includesRoom(arr, x, y) {
+    let includes = false
+    for (let e of arr) {
+        if (e.x == x && e.y == y)
+            includes = true
+    }
+    return includes
+}
+
+function randomEven(min, max) {
+    const rnd = Math.floor(Math.random() * (max - min + 1) + min)
+    return rnd % 2 == 1 ? rnd : randomEven(min, max)
+}
+
+*/
 
 
 

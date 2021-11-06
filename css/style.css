@@ -16,7 +16,7 @@
   display: flex;
 }
 
-#board .row div {
+.room {
   width: 70px;
   height: 70px;
   display: -webkit-box;
