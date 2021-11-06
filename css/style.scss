@@ -15,14 +15,15 @@
         //position: relative;
         display: flex;
         div {
-            border: 1px solid black;
+            //border: 1px solid black;
             width: 70px;
             height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 5px;
+            margin: 3px;
             background-size: cover;
+            border-radius: 10px;
         }
     }
 }

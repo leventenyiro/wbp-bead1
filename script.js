@@ -93,6 +93,8 @@ class Room {
                 this.type.src = 'img/t.png'
                 break;
         }
+
+        this.rot = `rotate(${rot * 90}deg)`
     }
 }
 
@@ -143,6 +145,7 @@ function startGame() {
     for (let e of basedRooms) {
         room = document.querySelectorAll('.row')[e.x].querySelectorAll('div')[e.y]
         room.style.backgroundImage = `url(${e.type.src})`
+        room.style.transform = e.rot
     }
 }
 
