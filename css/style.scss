@@ -1,4 +1,17 @@
-#board div div {
-    width: 100px;
-    height: 100px;
+#board {
+    .row {
+        //width: 100px;
+        //height: 100px;
+        //position: relative;
+        display: flex;
+        div {
+            border: 1px solid black;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px;
+        }
+    }
 }
