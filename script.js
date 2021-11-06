@@ -1,4 +1,4 @@
-let game = document.querySelector('#game')
+const main = document.querySelector('#main')
 // rotations
 const UP = 0
 const RIGHT = 1
@@ -13,7 +13,7 @@ const PLAYERS = ['red', 'blue', 'green', 'purple']
 
 // kezdőképernyő - új játék, leírás
 function startScreen() {
-    game.innerHTML = ""
+    main.innerHTML = ""
     // játékosszám beállítása
     const divSettings = document.createElement('div')
     divSettings.id = "settings"
@@ -61,22 +61,22 @@ function startScreen() {
     btnDesc.addEventListener('click', desc)
     divSettings.appendChild(btnDesc);
 
-    game.appendChild(divSettings)
+    main.appendChild(divSettings)
 }
 
 function desc() {
     // startScreen törlése, majd újrameghívása
-    game.innerHTML = ""
+    main.innerHTML = ""
     const divDesc = document.createElement('div')
     divDesc.innerHTML = `<h1>A játék leírása</h1>
     <p>A <b>katakomba</b> szobáit egy 7x7-es négyzetrács cellái jelképezik. Minden szobában adott, hogy hány falán van ajtó. Ha két szomszédos szoba érintkező falán egy-egy ajtó van, akkor át lehet menni egyik szobából a másikba. A négyzetrács páros sorait és oszlopait el lehet tolni, a többi szoba végig rögzített a játék során. Az eltolásokkal az ajtókon keresztül utak nyílnak a szobák között, így lehet eljutni a kincsekhez. Mindegyik kérő arra törekszik, hogy a katakomba szobáinak ötletes eltolásával eljusson a kincsekhez. Aki elsőként találja meg mindahányat és kiindulópontjára sikeresen visszaérkezik az a nyertes.</p>`
-    game.appendChild(divDesc)
+    main.appendChild(divDesc)
 
     // btnBack
     const btnBack = document.createElement('button')
     btnBack.innerHTML = "Vissza"
     btnBack.addEventListener('click', startScreen)
-    game.appendChild(btnBack);
+    main.appendChild(btnBack);
 }
 
 class Room {
@@ -131,7 +131,11 @@ let arrRooms = [
 
 function startGame(players, numberCards) {
     // div, jó sok divvel
-    game.innerHTML = ""
+    main.innerHTML = ""
+
+    const game = document.createElement('div')
+    game.id = 'game'
+
     const board = document.createElement('div')
     board.id = 'board'
     // ide jönnek majd a panelek
@@ -154,7 +158,7 @@ function startGame(players, numberCards) {
     // kártyák behelyettesítése
     for (let e of arrRooms) {
         if (e.x != -1) {
-            let room = document.querySelectorAll('.row')[e.x].querySelectorAll('div')[e.y]
+            let room = board.querySelectorAll('.row')[e.x].querySelectorAll('div')[e.y]
             room.style.backgroundImage = `url(${e.type.src})`
             room.style.transform = e.rot
         }
@@ -171,7 +175,7 @@ function startGame(players, numberCards) {
         const divPlayer = document.createElement('div')
         divPlayer.classList.add('player')
         divPlayer.style.backgroundColor = PLAYERS[i]
-        document.querySelectorAll('.row')[arrRooms[i].x].querySelectorAll('.room')[arrRooms[i].y].appendChild(divPlayer)
+        board.querySelectorAll('.row')[arrRooms[i].x].querySelectorAll('.room')[arrRooms[i].y].appendChild(divPlayer)
     }
 
     // kincsek kiosztása
@@ -190,7 +194,22 @@ function startGame(players, numberCards) {
         }
     }
 
-    showGold(0)
+    // kincsek mutatása - teszt
+    //showGold(0)
+    for (let e of arrRooms) {
+        if (e.gold == playerId) {
+            const divGold = document.createElement('div')
+            divGold.classList.add('gold')
+            board.querySelectorAll('.row')[e.x].querySelectorAll('.room')[e.y].appendChild(divGold)
+        }
+    }
+
+    main.appendChild(game)
+
+    // játékosinfók - game gyereke lesz
+    const info = document.createElement('div')
+    info.id = 'info'
+
 }
 
 function randomRooms() {
@@ -223,16 +242,14 @@ function getRoom(x, y) {
     return null
 }
 
-function showGold(playerId) {
+/*function showGold(playerId) {
     for (let e of arrRooms) {
         if (e.gold == playerId) {
             const divGold = document.createElement('div')
             divGold.classList.add('gold')
-            document.querySelectorAll('.row')[e.x].querySelectorAll('.room')[e.y].appendChild(divGold)
+            board.querySelectorAll('.row')[e.x].querySelectorAll('.room')[e.y].appendChild(divGold)
         }
     }
-}
-
-
+}*/
 
 startScreen()
