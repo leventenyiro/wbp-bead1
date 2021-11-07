@@ -10,6 +10,9 @@ const CORNER = 1
 const T = 2
 // játékosok
 const PLAYERS = ['red', 'blue', 'green', 'purple']
+// infók
+var player
+var numberCards
 
 // kezdőképernyő - új játék, leírás
 function startScreen() {
@@ -51,7 +54,9 @@ function startScreen() {
     const btnStartGame = document.createElement('button')
     btnStartGame.innerHTML = "Játék indítása"
     btnStartGame.addEventListener('click', (event) => {
-        startGame(inputPlayers.value, inputNumberCards.value)
+        player = inputPlayers.value
+        numberCards = inputNumberCards.value
+        startGame()
     })
     divSettings.appendChild(btnStartGame);
 
@@ -80,9 +85,9 @@ function desc() {
 }
 
 class Room {
-    constructor (x, y, type, rot) {
-        this.x = x
-        this.y = y
+    constructor (row, col, type, rot) {
+        this.row = row
+        this.col = col
         switch (type) {
             case 0:
                 this.type = new Image()
@@ -103,6 +108,12 @@ class Room {
 
     setGold(playerId) {
         this.gold = playerId;
+    }
+
+    setRoom(row, col, rot) {
+        this.row = row
+        this.col = col
+        this.rot = rot
     }
 }
 
@@ -129,7 +140,7 @@ let arrRooms = [
     new Room(6, 4, T, DOWN),
 ]
 
-function startGame(players, numberCards) {
+function startGame() {
     // div, jó sok divvel
     main.innerHTML = ""
 
@@ -150,31 +161,27 @@ function startGame(players, numberCards) {
         board.appendChild(row)
     }
     game.appendChild(board)
+    main.appendChild(game)
 
     // random szobák generálása
     randomRooms()
 
     // kártyák behelyettesítése
-    for (let e of arrRooms) {
-        if (e.x != -1) {
-            let room = board.querySelectorAll('.row')[e.x].querySelectorAll('div')[e.y]
-            room.style.backgroundImage = `url(${e.type.src})`
-            room.style.transform = e.rot
-        }
-    }
+    showBoard()
 
-    // amit beilleszthetsz
+    // amit beilleszthetsz - szeparált room
     const divSeparRoom = document.createElement('div')
     divSeparRoom.style.backgroundImage = `url(${arrRooms[arrRooms.length - 1].type.src})`
     divSeparRoom.classList.add('room')
+    divSeparRoom.dataset.id = arrRooms.length - 1
     game.appendChild(divSeparRoom)
 
     // játékosok rögzítése
-    for (let i = 0; i < players; i++) {
+    for (let i = 0; i < player; i++) {
         const divPlayer = document.createElement('div')
         divPlayer.classList.add('player')
         divPlayer.style.backgroundColor = PLAYERS[i]
-        board.querySelectorAll('.row')[arrRooms[i].x].querySelectorAll('.room')[arrRooms[i].y].appendChild(divPlayer)
+        board.querySelectorAll('.row')[arrRooms[i].row].querySelectorAll('.room')[arrRooms[i].col].appendChild(divPlayer)
     }
 
     // kincsek kiosztása
@@ -187,32 +194,17 @@ function startGame(players, numberCards) {
         }
         arrRooms[rndRoom].gold = playerId
 
-        if (numberCardsPerPlayer == numberCards / players) {
+        if (numberCardsPerPlayer == numberCards / player) {
             playerId++
             numberCardsPerPlayer = 0
         }
     }
 
-    main.appendChild(game)
-
     // kincsek mutatása - teszt
     showGold(0)
 
     // játékosinfók - game gyereke lesz
-    const info = document.createElement('div')
-    info.id = 'info'
-    
-    const divPlayers = document.createElement('div')
-    for (let i = 0; i < players; i++) {
-        const divPlayer = document.createElement('div');
-        divPlayer.innerHTML = `
-            <h2>Player ${i + 1}</h2>
-            <p>Found</p>
-        `
-        divPlayers.appendChild(divPlayer)
-    }
-    info.appendChild(divPlayers)
-    main.appendChild(info)
+    showInfo()
 }
 
 function randomRooms() {
@@ -237,23 +229,88 @@ function random(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getRoom(x, y) {
+function getRoom(row, col) {
     for (let e of arrRooms) {
-        if (e.x === x && e.y === y)
+        if (e.row === row && e.col === col)
             return e
     }
     return null
 }
 
+function showBoard() {
+    let i = 0;
+    for (let e of arrRooms) {
+        if (e.row != -1) {
+            let room = main.querySelector('#game #board').querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col]
+            if ((e.row % 2 == 1 && (e.col == 0 || e.col == 6)) || (e.col % 2 == 1 && (e.row == 0 || e.row == 6))) {
+                room.classList.add('selectPush')
+                room.addEventListener('click', (event) => {
+                    pushRoom(e.row, e.col, e.row % 2 == 1 ? (e.col == 0 ? LEFT : RIGHT) : (e.row == 0 ? UP : DOWN))
+                })
+            } else {
+                room.classList.remove('selectPush')
+            }
+            room.style.backgroundImage = `url(${e.type.src})`
+            room.style.transform = e.rot
+            room.dataset.id = i
+        }
+    }
+}
+
 function showGold(playerId) {
-    console.log(main.querySelector('#game'))
     for (let e of arrRooms) {
         if (e.gold == playerId) {
             const divGold = document.createElement('div')
             divGold.classList.add('gold')
-            main.querySelector('#game #board').querySelectorAll('.row')[e.x].querySelectorAll('.room')[e.y].appendChild(divGold)
+            main.querySelector('#game #board').querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col].appendChild(divGold)
         }
     }
+}
+
+function pushRoom(row, col, direction) {
+    if (direction % 2 == 0) { // col fix
+        const multiply = direction == 0 ? 1 : -1;
+        //const row = main.querySelector('#game #board').querySelectorAll('.row')[row]
+        for (let i = 0; i < 7; i++) {
+            // (2,1), (2,2), (2,3)...
+            const room = main.querySelector('#game #board').querySelectorAll('.row')[i].querySelectorAll('.room')[col]
+            arrRooms[room.dataset.id].setRoom(row + multiply, col, arrRooms[room.dataset.id].rot)
+        }
+        const oldSeparate = getRoom(-1, -1)
+        oldSeparate.setRoom(multiply == 1 ? 0 : 6, col, oldSeparate.rot)
+        const newSeparate = getRoom(multiply == 1 ? 7 : -1, col)
+        newSeparate.setRoom(-1, -1, newSeparate.rot)
+    } else { // row fix
+        const multiply = direction == 1 ? -1 : 1;
+        const divRow = main.querySelector('#game #board').querySelectorAll('.row')[row]
+        for (let i = 0; i < 7; i++) {
+            const room = row.querySelectorAll('.room')[i]
+            arrRooms[room.dataset.id].setRoom(row, col + multiply, arrRooms[room.dataset.id].rot)
+        }
+        // a kilökődött elem megkapása, és a régi beillesztése
+        const oldSeparate = getRoom(-1, -1)
+        oldSeparate.setRoom(row, multiply == 1 ? 6 : 0, oldSeparate.rot)
+        const newSeparate = getRoom(row, multiply == 1 ? -1 : 7)
+        newSeparate.setRoom(-1, -1, newSeparate.rot)
+    }
+}
+
+function showInfo() {
+    const info = document.createElement('div')
+    info.id = 'info'
+    
+    const divPlayers = document.createElement('div')
+    divPlayers.id = 'divPlayers'
+    for (let i = 0; i < player; i++) {
+        const divPlayer = document.createElement('div');
+        divPlayer.innerHTML = `
+            <h2>Player ${i + 1}</h2>
+            <p>Found</p>
+        `
+        divPlayers.appendChild(divPlayer)
+    }
+    info.appendChild(divPlayers)
+    main.appendChild(info)
 }
 
 startScreen()

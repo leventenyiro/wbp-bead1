@@ -56,4 +56,9 @@
   -webkit-box-shadow: 0 0 10px 10px yellow;
           box-shadow: 0 0 10px 10px yellow;
 }
+
+.selectPush:hover {
+  -webkit-box-shadow: inset 0 0 5px 5px violet;
+          box-shadow: inset 0 0 5px 5px violet;
+}
 /*# sourceMappingURL=style.css.map */

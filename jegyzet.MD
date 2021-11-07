@@ -18,3 +18,5 @@ Játékosinfó
 Katakomba tolás
     Kincs áthelyezés (nem lehet szeparálton)
 Léptetés (Nem mindegy hova)
+
+setRoom átalakítása?
