@@ -253,6 +253,7 @@ function showBoard() {
             room.style.backgroundImage = `url(${e.type.src})`
             room.style.transform = e.rot
             room.dataset.id = i
+            i++
         }
     }
 }
@@ -268,7 +269,7 @@ function showGold(playerId) {
 }
 
 function pushRoom(row, col, direction) {
-    if (direction % 2 == 0) { // col fix
+    /*if (direction % 2 == 0) { // col fix
         const multiply = direction == 0 ? 1 : -1;
         //const row = main.querySelector('#game #board').querySelectorAll('.row')[row]
         for (let i = 0; i < 7; i++) {
@@ -292,6 +293,25 @@ function pushRoom(row, col, direction) {
         oldSeparate.setRoom(row, multiply == 1 ? 6 : 0, oldSeparate.rot)
         const newSeparate = getRoom(row, multiply == 1 ? -1 : 7)
         newSeparate.setRoom(-1, -1, newSeparate.rot)
+    }*/
+    //console.log(row + " " + col + " " + direction);
+    if (direction % 2 == 0) {
+        //console.log(arrRooms);
+        const multiply = direction == 0 ? 1 : -1
+        for (let i = 0; i < 7; i++) {
+            //const room = main.querySelector('#game #board')[i].querySelectorAll('.room')[col]
+            //console.log(main.querySelector('#game #board').querySelectorAll('.row')[i].querySelectorAll('.room')[col])
+            const room = main.querySelector('#game #board').querySelectorAll('.row')[i].querySelectorAll('.room')[col]
+            console.log(arrRooms[room.dataset.id].row)
+            //arrRooms[room.dataset.id].setRoom((row + 1), col, arrRooms[room.dataset.id].rot)
+        }
+        //const oldSeparate = getRoom(-1, -1)
+        //oldSeparate.setRoom(multiply == 1 ? 0 : 6, col, oldSeparate.rot)
+        const newSeparate = getRoom(multiply == 1 ? 7 : -1, col)
+        //console.log(arrRooms);
+        newSeparate.setRoom(-1, -1, newSeparate.rot)
+    } else {
+
     }
 }
 
