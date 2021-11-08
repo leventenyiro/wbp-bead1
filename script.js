@@ -295,23 +295,32 @@ function pushRoom(row, col, direction) {
         newSeparate.setRoom(-1, -1, newSeparate.rot)
     }*/
     //console.log(row + " " + col + " " + direction);
-    if (direction % 2 == 0) {
+    const board = main.querySelector('#game #board')
+    if (direction % 2 == 0) { // col fix
         //console.log(arrRooms);
         const multiply = direction == 0 ? 1 : -1
         for (let i = 0; i < 7; i++) {
             //const room = main.querySelector('#game #board')[i].querySelectorAll('.room')[col]
             //console.log(main.querySelector('#game #board').querySelectorAll('.row')[i].querySelectorAll('.room')[col])
-            const room = main.querySelector('#game #board').querySelectorAll('.row')[i].querySelectorAll('.room')[col]
+            const room = board.querySelectorAll('.row')[i].querySelectorAll('.room')[col]
             console.log(arrRooms[room.dataset.id].row)
             //arrRooms[room.dataset.id].setRoom((row + 1), col, arrRooms[room.dataset.id].rot)
         }
-        //const oldSeparate = getRoom(-1, -1)
-        //oldSeparate.setRoom(multiply == 1 ? 0 : 6, col, oldSeparate.rot)
+        const oldSeparate = getRoom(-1, -1)
+        oldSeparate.setRoom(multiply == 1 ? 0 : 6, col, oldSeparate.rot)
         const newSeparate = getRoom(multiply == 1 ? 7 : -1, col)
         //console.log(arrRooms);
         newSeparate.setRoom(-1, -1, newSeparate.rot)
-    } else {
-
+    } else { // row fix
+        const multiply = direction == 3 ? 1 : -1
+        const rooms = board.querySelectorAll('row')[row].querySelectorAll('.room')
+        for (let i = 0; i < 7; i++) {
+            const room = rooms[i].data
+        }
+        const oldSeparate = getRoom(-1, -1)
+        oldSeparate.setRoom(multiply == 1 ? 0 : 6, col, oldSeparate.rot)
+        const newSeparate = getRoom(multiply == 1 ? 7 : -1, col)
+        newSeparate.setRoom(-1, -1, newSeparate.rot)
     }
 }
 
