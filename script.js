@@ -266,9 +266,10 @@ function startGame() {
     randomRooms()
 
     // játékosok létrehozása
-    for (let i = 0; i < player; i++) {
+    /*for (let i = 0; i < player; i++) {
         arrPlayers.push(new Player(i, arrRooms[i].row, arrRooms[i].col))
-    }
+    }*/
+    arrPlayers.push(new Player(0, 1, 0))
 
     // kártyák behelyettesítése
     showBoard()
@@ -415,8 +416,22 @@ function pushRoom(event) {
             arrRooms[room.dataset.id].setPosition(i + multiply, parseInt(e.col))
             //room.style.transition = '2s'
         }
+
+        // játékos tolása
+        for (let p of arrPlayers) {
+            if (p.col == parseInt(e.col)) {
+                board.querySelectorAll('.row')[p.row + 1].querySelectorAll('.room')[p.col].innerHTML = ''
+                p.setPosition(p.row + multiply, p.col)
+            }
+        }
+        
         getRoom(-1, -1).setPosition(multiply == 1 ? 0 : 6, parseInt(e.col))
-        getRoom(multiply == 1 ? 7 : -1, parseInt(e.col)).setPosition(-1, -1)
+        const newSeparate = getRoom(multiply == 1 ? 7 : -1, parseInt(e.col))
+        for (let e of arrPlayers) {
+            if (e.row == newSeparate.row && e.col == newSeparate.col)
+                e.setPosition(multiply == 1 ? 0 : 6, parseInt(e.col))
+        }
+        newSeparate.setPosition(-1, -1)
     } else { // row fix
         const multiply = direction == 3 ? 1 : -1
         prevPush.row = parseInt(e.row)
@@ -428,9 +443,25 @@ function pushRoom(event) {
             arrRooms[room.dataset.id].setPosition(parseInt(e.row), i + multiply)
             //room.style.transition = '2s'
         }
+
+        // játékos tolása
+        for (let p of arrPlayers) {
+            if (p.row == parseInt(e.row)) {
+                rooms[p.col].innerHTML = ''
+                p.setPosition(p.row, p.col + multiply)
+            }
+        }
         
         getRoom(-1, -1).setPosition(parseInt(e.row), multiply == 1 ? 0 : 6)
-        getRoom(parseInt(e.row), multiply == 1 ? 7 : -1).setPosition(-1, -1)
+        //getRoom(parseInt(e.row), multiply == 1 ? 7 : -1).setPosition(-1, -1)
+        const newSeparate = getRoom(parseInt(e.row), multiply == 1 ? 7 : -1)
+        for (let e of arrPlayers) {
+            if (e.row == newSeparate.row && e.col == newSeparate.col) {
+                //rooms[e.col].innerHTML = ''
+                e.setPosition(e.row, multiply == 1 ? 0 : 6)
+            }
+        }
+        newSeparate.setPosition(-1, -1)
     }
 
     showBoard()
