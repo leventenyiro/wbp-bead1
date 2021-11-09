@@ -94,18 +94,19 @@ class Room {
         this.id = roomId++
         this.row = row
         this.col = col
+        this.type = type
         switch (type) {
             case 0:
-                this.type = new Image()
-                this.type.src = 'img/line.png'
+                this.img = new Image()
+                this.img.src = 'img/line.png'
                 break;
             case 1:
-                this.type = new Image()
-                this.type.src = 'img/corner.png'
+                this.img = new Image()
+                this.img.src = 'img/corner.png'
                 break;
             case 2:
-                this.type = new Image()
-                this.type.src = 'img/t.png'
+                this.img = new Image()
+                this.img.src = 'img/t.png'
                 break;
         }
         this.rot = rot
@@ -126,6 +127,27 @@ class Room {
 
     getWays() {
         // merre lehet menni?
+        // UP RIGHT DOWN LEFT
+        // egy listát ad vissza
+        if (this.type == LINE) {
+            if (this.rot == 0 || this.rot == 2)
+                return [UP, DOWN]
+            return [RIGHT, LEFT]
+        } else if (this.type == CORNER) {
+            switch (this.rot) {
+                case 0: return [RIGHT, DOWN]
+                case 1: return [DOWN, LEFT]
+                case 2: return [LEFT, UP]
+                default: return [UP, RIGHT]
+            }
+        } else {
+            switch (this.rot) {
+                case 0: return [UP, RIGHT, LEFT]
+                case 1: return [UP, RIGHT, DOWN]
+                case 2: return [RIGHT, DOWN, LEFT]
+                default: return [DOWN, LEFT, UP]
+            }
+        }
     }
 }
 
@@ -172,24 +194,10 @@ let arrRooms = [
 ]
 
 function startGame() {
-    // div, jó sok divvel
     main.innerHTML = ''
 
     const game = document.createElement('div')
     game.id = 'game'
-
-    // headerArrow
-    /*const headerRow = document.createElement('div')
-    headerRow.classList.add('row')
-    for (let i = 0; i < 9; i++) {
-        const div = document.createElement('div')
-        div.classList.add('room')
-        if (i % 2 == 1) {
-            div.classList.add('arrow')
-        }
-        headerRow.appendChild(div)
-    }
-    game.appendChild(headerRow)*/
 
     const board = document.createElement('div')
     board.id = 'board'
@@ -332,7 +340,7 @@ function showBoard() {
         } else
             var room = document.querySelector('#separRoom')
 
-        room.style.backgroundImage = `url(${e.type.src})`
+        room.style.backgroundImage = `url(${e.img.src})`
         room.style.transform = `rotate(${e.rot * 90}deg)`
         room.dataset.id = e.id
     }
@@ -349,12 +357,11 @@ function showBoard() {
 
     }
 
-
     // játékosok mutatása
-    /*for (e of arrPlayers) {
+    for (e of arrPlayers) {
         const divPlayer = document.createElement('div')
         divPlayer.classList.add('player')
-        if (turn == e.id) {
+        if (turn === e.id) {
             setInterval(() => {
                 divPlayer.style.transition = '0.2s'
                 if (!divPlayer.style.boxShadow)
@@ -365,8 +372,10 @@ function showBoard() {
 
         }
         divPlayer.style.backgroundColor = e.color
-        board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col].appendChild(divPlayer)
-    }*/
+        var room = board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col]
+        room.innerHTML = ''
+        room.appendChild(divPlayer)
+    }
 }
 
 // rotate
