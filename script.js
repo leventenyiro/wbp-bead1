@@ -201,12 +201,22 @@ function startGame() {
             const div = document.createElement('div')
             if (((i == 0 || i == 8) && j % 2 == 0 && j != 0 && j != 8) || (i % 2 == 0 && i != 0 && i != 8 && (j == 0 || j == 8))) {
                 div.classList.add('arrow')
-                if (i == 0)
+                if (i == 0) {
                     div.style.transform = 'rotate(180deg)'
-                else if (j == 0)
+                    div.dataset.row = 0
+                    div.dataset.col = j - 1
+                } else if (j == 0) {
                     div.style.transform = 'rotate(90deg)'
-                else if (j == 8)
+                    div.dataset.row = i -1
+                    div.dataset.col = 0
+                } else if (j == 8) {
                     div.style.transform = 'rotate(270deg)'
+                    div.dataset.row = i - 1
+                    div.dataset.col = 6
+                } else {
+                    div.dataset.row = 6
+                    div.dataset.col = j - 1
+                }
             } else if (i > 0 && i < 8 && j > 0 && j < 8)
                 div.classList.add('room')
             else
@@ -253,7 +263,7 @@ function startGame() {
     }
 
     // kártyák behelyettesítése
-    //showBoard()
+    showBoard()
 
     // kincsek kiosztása
     let playerId = 0;
@@ -313,14 +323,12 @@ function showBoard() {
     // szobák mutatása
     for (let e of arrRooms) {
         if (e.row != -1) {
-            var room = board.querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col]
-            room.removeEventListener('click', pushRoom)
-            if ((e.row != prevPush.row || e.col != prevPush.col) && ((e.row % 2 == 1 && (e.col == 0 || e.col == 6)) || (e.col % 2 == 1 && (e.row == 0 || e.row == 6)))) {
-                room.classList.add('selectPush')
-                room.addEventListener('click', pushRoom)
+            var room = board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col]
+            /*if ((e.row != prevPush.row || e.col != prevPush.col) && ((e.row % 2 == 1 && (e.col == 0 || e.col == 6)) || (e.col % 2 == 1 && (e.row == 0 || e.row == 6)))) {
+                //room.classList.add('selectPush')
             } else {
-                room.classList.remove('selectPush')
-            }
+                //room.classList.remove('selectPush')
+            }*/
         } else
             var room = document.querySelector('#separRoom')
 
@@ -329,8 +337,21 @@ function showBoard() {
         room.dataset.id = e.id
     }
 
+    // nyilakra kattintás
+    for (let e of board.querySelectorAll('.arrow')) {
+        e.removeEventListener('click', pushRoom)
+        if (parseInt(e.dataset.row) !== prevPush.row || parseInt(e.dataset.col) !== prevPush.col) {
+            e.addEventListener('click', pushRoom)
+            e.classList.add('arrowEnabled')
+        } else {
+            e.classList.remove('arrowEnabled')
+        }
+
+    }
+
+
     // játékosok mutatása
-    for (e of arrPlayers) {
+    /*for (e of arrPlayers) {
         const divPlayer = document.createElement('div')
         divPlayer.classList.add('player')
         if (turn == e.id) {
@@ -344,8 +365,8 @@ function showBoard() {
 
         }
         divPlayer.style.backgroundColor = e.color
-        board.querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col].appendChild(divPlayer)
-    }
+        board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col].appendChild(divPlayer)
+    }*/
 }
 
 // rotate
@@ -358,48 +379,49 @@ document.addEventListener('keydown', (event) => {
 
 function rotateLeft() {
     const separ = getRoom(-1, -1)
-    separ.setRotate(separ.rot == 0 ? 3 : separ.rot - 1) // mennyi az annyi?
+    separ.setRotate(separ.rot == 0 ? 3 : separ.rot - 1)
     showBoard()
 }
 
 function rotateRight() {
     const separ = getRoom(-1, -1)
-    separ.setRotate(separ.rot == 3 ? 0 : separ.rot + 1) // mennyi az annyi?
+    separ.setRotate(separ.rot == 3 ? 0 : separ.rot + 1)
     showBoard()
 }
 
 function pushRoom(event) {
-    const e = arrRooms[event.target.dataset.id]
-    direction = e.row % 2 == 1 ? (e.col == 0 ? LEFT : RIGHT) : (e.row == 0 ? UP : DOWN)
+    //const e = arrRooms[event.target.dataset.id]
+    const e = event.target.dataset
+    direction = parseInt(e.row) % 2 == 1 ? (parseInt(e.col) == 0 ? LEFT : RIGHT) : (parseInt(e.row) == 0 ? UP : DOWN)
 
     const board = main.querySelector('#game #board')
     if (direction % 2 == 0) { // col fix
         const multiply = direction == 0 ? 1 : -1
 
-        prevPush.row = e.row + multiply * 6
-        prevPush.col = e.col
+        prevPush.row = parseInt(e.row) + multiply * 6
+        prevPush.col = parseInt(e.col)
 
         for (let i = 0; i < 7; i++) {
-            const room = board.querySelectorAll('.row')[i].querySelectorAll('.room')[e.col]
-            arrRooms[room.dataset.id].setPosition(i + multiply, e.col)
+            const room = board.querySelectorAll('.row')[i + 1].querySelectorAll('.room')[parseInt(e.col)]
+            arrRooms[room.dataset.id].setPosition(i + multiply, parseInt(e.col))
             //room.style.transition = '2s'
         }
-        getRoom(-1, -1).setPosition(multiply == 1 ? 0 : 6, e.col)
-        getRoom(multiply == 1 ? 7 : -1, e.col).setPosition(-1, -1)
+        getRoom(-1, -1).setPosition(multiply == 1 ? 0 : 6, parseInt(e.col))
+        getRoom(multiply == 1 ? 7 : -1, parseInt(e.col)).setPosition(-1, -1)
     } else { // row fix
         const multiply = direction == 3 ? 1 : -1
-
-        prevPush.row = e.row
-        prevPush.col = e.col + multiply * 6
+        prevPush.row = parseInt(e.row)
+        prevPush.col = parseInt(e.col) + multiply * 6
         
-        const rooms = board.querySelectorAll('.row')[e.row].querySelectorAll('.room')
+        const rooms = board.querySelectorAll('.row')[parseInt(e.row) + 1].querySelectorAll('.room')
         for (let i = 0; i < 7; i++) {
             const room = rooms[i]
-            arrRooms[room.dataset.id].setPosition(e.row, i + multiply)
+            arrRooms[room.dataset.id].setPosition(parseInt(e.row), i + multiply)
             //room.style.transition = '2s'
         }
-        getRoom(-1, -1).setPosition(e.row, multiply == 1 ? 0 : 6)
-        getRoom(e.row, multiply == 1 ? 7 : -1).setPosition(-1, -1)
+        
+        getRoom(-1, -1).setPosition(parseInt(e.row), multiply == 1 ? 0 : 6)
+        getRoom(parseInt(e.row), multiply == 1 ? 7 : -1).setPosition(-1, -1)
     }
 
     showBoard()

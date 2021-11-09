@@ -28,21 +28,40 @@
     }
 
     .room {
-        background-color: red;
+        //background-color: red;
         //border: 1px solid black;
         display: flex;
         align-items: center;
         justify-content: center;
         background-size: cover;
         border-radius: 10px;
+
+        .player {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+        }
     }
 
     .arrow {
+        transition: 0.2s;
         background-image: url('../img/arrow.png');
         background-repeat: no-repeat;
         background-size: contain;
+        opacity: 20%;
         //transform: rotate(270deg);
         //background-color: green;
+    }
+
+    .arrowEnabled {
+        transition: 0.2s;
+        opacity: 70%;
+        cursor: pointer;
+    }
+
+    .arrowEnabled:hover {
+        transition: 0.2s;
+        opacity: 100%;
     }
 
     .empty {
@@ -51,14 +70,11 @@
     }
 }
 
-
-
-
-
-.player {
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
+#separRoom {
+    border-radius: 10px;
+    width: 70px;
+    height: 70px;
+    background-size: cover;
 }
 
 .gold {

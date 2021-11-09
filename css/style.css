@@ -30,7 +30,6 @@
 }
 
 #board .room {
-  background-color: red;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -44,10 +43,32 @@
   border-radius: 10px;
 }
 
+#board .room .player {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
 #board .arrow {
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
   background-image: url("../img/arrow.png");
   background-repeat: no-repeat;
   background-size: contain;
+  opacity: 20%;
+}
+
+#board .arrowEnabled {
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  opacity: 70%;
+  cursor: pointer;
+}
+
+#board .arrowEnabled:hover {
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  opacity: 100%;
 }
 
 #board .empty {
@@ -55,10 +76,11 @@
   height: 70px;
 }
 
-.player {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
+#separRoom {
+  border-radius: 10px;
+  width: 70px;
+  height: 70px;
+  background-size: cover;
 }
 
 .gold {
