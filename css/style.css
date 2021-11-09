@@ -109,7 +109,8 @@
 }
 
 .availablePath {
-  -webkit-box-shadow: inset 0 0 8px 8px greenyellow;
-          box-shadow: inset 0 0 8px 8px greenyellow;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 0 8px 8px magenta;
+          box-shadow: inset 0 0 8px 8px magenta;
 }
 /*# sourceMappingURL=style.css.map */

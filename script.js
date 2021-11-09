@@ -410,7 +410,7 @@ function showBoard() {
     // lépés
     let player = arrPlayers[0]
 
-    path = showAvailableNeighbours(player.row, player.col)
+    /*path = showAvailableNeighbours(player.row, player.col)
     for (let e of path) {
         const room = board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col]
         room.classList.add('availablePath')
@@ -418,11 +418,20 @@ function showBoard() {
             player.setPosition(e.row, e.col)
             showBoard() // inkább changePos
         })
-    }
+    }*/
 
     // utak mutatása - később, ha turnPart == 1
     //let ways = showAvailableRooms(0, 5)
     //console.log(ways)
+
+    /*document.addEventListener('keydown', (e) => {
+        console.log(e.key);
+        if (e.key == 'f') {
+            player.setPosition(2,0)
+            showBoard()
+        }
+    })*/
+    showAvailableRooms(0, 0, -1, player)
 }
 
 function showAvailableNeighbours(row, col) {
@@ -440,39 +449,54 @@ function showAvailableNeighbours(row, col) {
     return path
 }
 
-function showAvailableRooms(row, col) {
+function getAvailableRooms(row, col, from) {
+    //if (from == null)
+    //    from = 0
     // rekurzív hívás
     // 4 irány
-    for (let e of getRoom(row, col).getWays()) {
-        /*switch (e) {
-            case 0: // UP
-                if (row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
-                    return showAvailableRooms(row - 1, col)
-                break;
-            case 1:
-                if (col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
-                    return showAvailableRooms(row, col + 1)
-                break;
-            case 2:
-                if (row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
-                    return showAvailableRooms(row + 1, col)
-                break;
-            default:
-                if (col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
-                    return showAvailableRooms(row, col - 1)
-                break;
-        }*/
-        if (getRoom(row, col).getWays().includes(0) && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
-            return showAvailableRooms(row - 1, col)
-        if (getRoom(row, col).getWays().includes(1) && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
-            return showAvailableRooms(row, col + 1)
-        if (getRoom(row, col).getWays().includes(2) && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
-            return showAvailableRooms(row + 1, col)
-        if (getRoom(row, col).getWays().includes(3) && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
-            return showAvailableRooms(row, col - 1)
-        return getRoom(row, col).id
-    }
+    //console.log(getRoom(row, col).id)
+    const ways = getRoom(row, col).getWays()
+    //console.log(ways);
+    const actual = getRoom(row, col).id
+    console.log(actual);
+    let arr = []
+        if (from != 0 && ways.includes(0) && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
+            arr.push(showAvailableRooms(row - 1, col, 2))
+        if (from != 1 && ways.includes(1) && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
+            arr.push(showAvailableRooms(row, col + 1, 3))
+        if (from != 2 && ways.includes(2) && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
+            arr.push(showAvailableRooms(row + 1, col, 0))
+        if (from != 3 && ways.includes(3) && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
+            arr.push(showAvailableRooms(row, col - 1, 1))
+
+        //arr = [arr, getRoom(row, col).id]
+        let newArr = []
+        for (let e of arr) {
+            newArr.push(e)
+        }
+        newArr.push(actual)
+        return newArr
+}
+
+function showAvailableRooms(row, col, from, player) {
+    const ways = getRoom(row, col).getWays()
+    const actual = getRoom(row, col)
+    if (from != 0 && ways.includes(0) && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
+        showAvailableRooms(row - 1, col, 2, player)
+    if (from != 1 && ways.includes(1) && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
+        showAvailableRooms(row, col + 1, 3, player)
+    if (from != 2 && ways.includes(2) && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
+        showAvailableRooms(row + 1, col, 0, player)
+    if (from != 3 && ways.includes(3) && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
+        showAvailableRooms(row, col - 1, 1, player)
     
+    // műveletek
+    const room = document.querySelector('#game #board').querySelectorAll('.row')[actual.row + 1].querySelectorAll('.room')[actual.col]
+    room.classList.add('availablePath')
+    room.addEventListener('click', () => {
+        player.setPosition(e.row, e.col)
+        showBoard() // inkább changePos
+    })
 }
 
 // rotate
