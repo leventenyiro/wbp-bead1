@@ -129,13 +129,13 @@ class Room {
     }
 
     getWays() {
-        // merre lehet menni?
+        // merre lehet menni? - a másik oldal is ugyanolyan?
         // UP RIGHT DOWN LEFT
         // egy listát ad vissza
         if (this.type == LINE) {
             if (this.rot == 0 || this.rot == 2)
-                return [UP, DOWN]
-            return [RIGHT, LEFT]
+                return [RIGHT, LEFT]
+            return [UP, DOWN]
         } else if (this.type == CORNER) {
             switch (this.rot) {
                 case 0: return [RIGHT, DOWN]
@@ -227,38 +227,6 @@ function startGame() {
 
     const board = document.createElement('div')
     board.id = 'board'
-
-    for (let i = 0; i < 9; i++) {
-        const row = document.createElement('div')
-        row.classList.add('row')
-        for (let j = 0; j < 9; j++) {
-            const div = document.createElement('div')
-            if (((i == 0 || i == 8) && j % 2 == 0 && j != 0 && j != 8) || (i % 2 == 0 && i != 0 && i != 8 && (j == 0 || j == 8))) {
-                div.classList.add('arrow')
-                if (i == 0) {
-                    div.style.transform = 'rotate(180deg)'
-                    div.dataset.row = 0
-                    div.dataset.col = j - 1
-                } else if (j == 0) {
-                    div.style.transform = 'rotate(90deg)'
-                    div.dataset.row = i -1
-                    div.dataset.col = 0
-                } else if (j == 8) {
-                    div.style.transform = 'rotate(270deg)'
-                    div.dataset.row = i - 1
-                    div.dataset.col = 6
-                } else {
-                    div.dataset.row = 6
-                    div.dataset.col = j - 1
-                }
-            } else if (i > 0 && i < 8 && j > 0 && j < 8)
-                div.classList.add('room')
-            else
-                div.classList.add('empty')
-            row.appendChild(div)
-        }
-        board.appendChild(row)
-    }
     game.appendChild(board)
 
     const divSepar = document.createElement('div')
@@ -326,6 +294,42 @@ function startGame() {
     showInfo()
 }
 
+function initRooms() {
+    const board = document.querySelector('#game #board')
+    board.innerHTML = ''
+    for (let i = 0; i < 9; i++) {
+        const row = document.createElement('div')
+        row.classList.add('row')
+        for (let j = 0; j < 9; j++) {
+            const div = document.createElement('div')
+            if (((i == 0 || i == 8) && j % 2 == 0 && j != 0 && j != 8) || (i % 2 == 0 && i != 0 && i != 8 && (j == 0 || j == 8))) {
+                div.classList.add('arrow')
+                if (i == 0) {
+                    div.style.transform = 'rotate(180deg)'
+                    div.dataset.row = 0
+                    div.dataset.col = j - 1
+                } else if (j == 0) {
+                    div.style.transform = 'rotate(90deg)'
+                    div.dataset.row = i -1
+                    div.dataset.col = 0
+                } else if (j == 8) {
+                    div.style.transform = 'rotate(270deg)'
+                    div.dataset.row = i - 1
+                    div.dataset.col = 6
+                } else {
+                    div.dataset.row = 6
+                    div.dataset.col = j - 1
+                }
+            } else if (i > 0 && i < 8 && j > 0 && j < 8)
+                div.classList.add('room')
+            else
+                div.classList.add('empty')
+            row.appendChild(div)
+        }
+        board.appendChild(row)
+    }
+}
+
 function randomRooms() {
     let types = [13, 15, 6]
     
@@ -357,17 +361,12 @@ function getRoom(row, col) {
 }
 
 function showBoard() {
+    initRooms()
     showGold(0)
     const board = main.querySelector('#game #board')
-    // szobák mutatása
     for (let e of arrRooms) {
         if (e.row != -1) {
             var room = board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col]
-            /*if ((e.row != prevPush.row || e.col != prevPush.col) && ((e.row % 2 == 1 && (e.col == 0 || e.col == 6)) || (e.col % 2 == 1 && (e.row == 0 || e.row == 6)))) {
-                //room.classList.add('selectPush')
-            } else {
-                //room.classList.remove('selectPush')
-            }*/
         } else
             var room = document.querySelector('#separRoom')
 
@@ -407,6 +406,73 @@ function showBoard() {
         room.innerHTML = ''
         room.appendChild(divPlayer)
     }
+
+    // lépés
+    let player = arrPlayers[0]
+
+    path = showAvailableNeighbours(player.row, player.col)
+    for (let e of path) {
+        const room = board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col]
+        room.classList.add('availablePath')
+        room.addEventListener('click', () => {
+            player.setPosition(e.row, e.col)
+            showBoard() // inkább changePos
+        })
+    }
+
+    // utak mutatása - később, ha turnPart == 1
+    //let ways = showAvailableRooms(0, 5)
+    //console.log(ways)
+}
+
+function showAvailableNeighbours(row, col) {
+    let path = []
+    for (let e of getRoom(row, col).getWays()) {
+        if (e == 0 && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
+            path.push(getRoom(row - 1, col))
+        if (e == 1 && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
+            path.push(getRoom(row, col + 1))
+        if (e == 2 && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
+            path.push(getRoom(row + 1, col))
+        if (e == 3 && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
+            path.push(getRoom(row, col - 1))
+    }
+    return path
+}
+
+function showAvailableRooms(row, col) {
+    // rekurzív hívás
+    // 4 irány
+    for (let e of getRoom(row, col).getWays()) {
+        /*switch (e) {
+            case 0: // UP
+                if (row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
+                    return showAvailableRooms(row - 1, col)
+                break;
+            case 1:
+                if (col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
+                    return showAvailableRooms(row, col + 1)
+                break;
+            case 2:
+                if (row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
+                    return showAvailableRooms(row + 1, col)
+                break;
+            default:
+                if (col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
+                    return showAvailableRooms(row, col - 1)
+                break;
+        }*/
+        if (getRoom(row, col).getWays().includes(0) && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
+            return showAvailableRooms(row - 1, col)
+        if (getRoom(row, col).getWays().includes(1) && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
+            return showAvailableRooms(row, col + 1)
+        if (getRoom(row, col).getWays().includes(2) && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
+            return showAvailableRooms(row + 1, col)
+        if (getRoom(row, col).getWays().includes(3) && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
+            return showAvailableRooms(row, col - 1)
+        return getRoom(row, col).id
+    }
+    
 }
 
 // rotate
@@ -430,7 +496,6 @@ function rotateRight() {
 }
 
 function pushRoom(event) {
-    //const e = arrRooms[event.target.dataset.id]
     const e = event.target.dataset
     direction = parseInt(e.row) % 2 == 1 ? (parseInt(e.col) == 0 ? LEFT : RIGHT) : (parseInt(e.row) == 0 ? UP : DOWN)
 
@@ -498,7 +563,6 @@ function pushRoom(event) {
 
         // kincs tolása
         for (let g of arrGolds) {
-            console.log(g);
             if (g.row == parseInt(e.row)) {
                 rooms[g.col].innerHTML = ''
                 g.setPosition(g.row, g.col + multiply)
@@ -506,12 +570,10 @@ function pushRoom(event) {
         }
         
         getRoom(-1, -1).setPosition(parseInt(e.row), multiply == 1 ? 0 : 6)
-        //getRoom(parseInt(e.row), multiply == 1 ? 7 : -1).setPosition(-1, -1)
         const newSeparate = getRoom(parseInt(e.row), multiply == 1 ? 7 : -1)
         // játékos letolása
         for (let p of arrPlayers) {
             if (p.row == newSeparate.row && p.col == newSeparate.col) {
-                //rooms[e.col].innerHTML = ''
                 p.setPosition(p.row, multiply == 1 ? 0 : 6)
             }
         }
