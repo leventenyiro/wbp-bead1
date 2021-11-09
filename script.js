@@ -112,9 +112,18 @@ class Room {
         this.gold = playerId;
     }
 
-    setRoom(row, col, rot) {
+    setRoom(row, col, rot) { // EZ KELL??
         this.row = row
         this.col = col
+        this.rot = rot
+    }
+
+    setPosition(row, col) {
+        this.row = row
+        this.col = col
+    }
+
+    setRotate(rot) {
         this.rot = rot
     }
 }
@@ -164,10 +173,26 @@ function startGame() {
     }
     game.appendChild(board)
 
+    const divSepar = document.createElement('div')
+    divSepar.id = 'separ'
     const divSeparRoom = document.createElement('div')
     divSeparRoom.classList.add('room')
-    divSeparRoom.id = 'separ'
-    game.appendChild(divSeparRoom)
+    divSeparRoom.id = 'separRoom'
+    divSepar.appendChild(divSeparRoom)
+
+    // btnBalra
+    const btnLeft = document.createElement('button')
+    btnLeft.innerHTML = "Balra"
+    btnLeft.addEventListener('click', rotateLeft)
+    divSepar.appendChild(btnLeft);
+
+    // btnJobbra
+    const btnRight = document.createElement('button')
+    btnRight.innerHTML = "Balra"
+    btnRight.addEventListener('click', rotateRight)
+    divSepar.appendChild(btnRight);
+
+    game.appendChild(divSepar)
     main.appendChild(game)
 
     // random szobák generálása
@@ -249,12 +274,33 @@ function showBoard() {
                 room.classList.remove('selectPush')
             }
         } else
-            var room = document.querySelector('#separ')
+            var room = document.querySelector('#separRoom')
 
         room.style.backgroundImage = `url(${e.type.src})`
         room.style.transform = `rotate(${e.rot * 90}deg)`
         room.dataset.id = e.id
     }
+}
+
+// rotate
+document.addEventListener('keydown', (event) => {
+    console.log(event.key)
+    if (event.key == 'ArrowLeft')
+        rotateLeft()
+    else if (event.key == 'ArrowRight')
+        rotateRight()
+})
+
+function rotateLeft() {
+    const separ = getRoom(-1, -1)
+    separ.setRotate(separ.rot == 0 ? 3 : separ.rot - 1) // mennyi az annyi?
+    showBoard()
+}
+
+function rotateRight() {
+    const separ = getRoom(-1, -1)
+    separ.setRotate(separ.rot == 3 ? 0 : separ.rot + 1) // mennyi az annyi?
+    showBoard()
 }
 
 function pushRoom(event) {
