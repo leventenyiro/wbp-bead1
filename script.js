@@ -112,12 +112,6 @@ class Room {
         this.gold = playerId;
     }
 
-    setRoom(row, col, rot) { // EZ KELL??
-        this.row = row
-        this.col = col
-        this.rot = rot
-    }
-
     setPosition(row, col) {
         this.row = row
         this.col = col
@@ -316,13 +310,11 @@ function pushRoom(event) {
 
         for (let i = 0; i < 7; i++) {
             const room = board.querySelectorAll('.row')[i].querySelectorAll('.room')[e.col]
-            arrRooms[room.dataset.id].setRoom(i + multiply, e.col, arrRooms[room.dataset.id].rot)
+            arrRooms[room.dataset.id].setPosition(i + multiply, e.col)
             //room.style.transition = '2s'
         }
-        const oldSeparate = getRoom(-1, -1)
-        oldSeparate.setRoom(multiply == 1 ? 0 : 6, e.col, oldSeparate.rot)
-        const newSeparate = getRoom(multiply == 1 ? 7 : -1, e.col)
-        newSeparate.setRoom(-1, -1, newSeparate.rot)
+        getRoom(-1, -1).setPosition(multiply == 1 ? 0 : 6, e.col)
+        getRoom(multiply == 1 ? 7 : -1, e.col).setPosition(-1, -1)
     } else { // row fix
         const multiply = direction == 3 ? 1 : -1
 
@@ -332,13 +324,13 @@ function pushRoom(event) {
         const rooms = board.querySelectorAll('.row')[e.row].querySelectorAll('.room')
         for (let i = 0; i < 7; i++) {
             const room = rooms[i]
-            arrRooms[room.dataset.id].setRoom(e.row, i + multiply, arrRooms[room.dataset.id].rot)
+            arrRooms[room.dataset.id].setPosition(e.row, i + multiply)
             //room.style.transition = '2s'
         }
-        const oldSeparate = getRoom(-1, -1)
-        oldSeparate.setRoom(e.row, multiply == 1 ? 0 : 6, oldSeparate.rot)
-        const newSeparate = getRoom(e.row, multiply == 1 ? 7 : -1)
-        newSeparate.setRoom(-1, -1, newSeparate.rot)
+        const oldSeparate = 
+        getRoom(-1, -1).setPosition(e.row, multiply == 1 ? 0 : 6)
+        const newSeparate = 
+        getRoom(e.row, multiply == 1 ? 7 : -1).setPosition(-1, -1)
     }
 
     showBoard()
