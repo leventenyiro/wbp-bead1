@@ -18,15 +18,15 @@ var numberCards
 
 // kezdőképernyő - új játék, leírás
 function startScreen() {
-    main.innerHTML = ""
+    main.innerHTML = ''
     // játékosszám beállítása
     const divSettings = document.createElement('div')
-    divSettings.id = "settings"
+    divSettings.id = 'settings'
 
     const labelInputPlayers = document.createElement('label')
-    labelInputPlayers.innerHTML = "Játékosok száma"
+    labelInputPlayers.innerHTML = 'Játékosok száma'
     const inputPlayers = document.createElement('input')
-    inputPlayers.type = "number"
+    inputPlayers.type = 'number'
     inputPlayers.min = 1
     inputPlayers.max = 4
     inputPlayers.value = 2
@@ -36,9 +36,9 @@ function startScreen() {
 
     // játékosokként hány kincskártya beállítása
     const labelInputNumberCards = document.createElement('label')
-    labelInputNumberCards.innerHTML = "Játékosonként hány kincskártya"
+    labelInputNumberCards.innerHTML = 'Játékosonként hány kincskártya'
     const inputNumberCards = document.createElement('input')
-    inputNumberCards.type = "number"
+    inputNumberCards.type = 'number'
     inputNumberCards.min = 1
     inputNumberCards.value = 1
     labelInputPlayers.htmlFor = inputNumberCards
@@ -54,7 +54,7 @@ function startScreen() {
 
     // btnStartGame
     const btnStartGame = document.createElement('button')
-    btnStartGame.innerHTML = "Játék indítása"
+    btnStartGame.innerHTML = 'Játék indítása'
     btnStartGame.addEventListener('click', (event) => {
         player = inputPlayers.value
         numberCards = inputNumberCards.value
@@ -64,7 +64,7 @@ function startScreen() {
 
     // leírás
     const btnDesc = document.createElement('button')
-    btnDesc.innerHTML = "Leírás"
+    btnDesc.innerHTML = 'Leírás'
     btnDesc.addEventListener('click', desc)
     divSettings.appendChild(btnDesc);
 
@@ -73,7 +73,7 @@ function startScreen() {
 
 function desc() {
     // startScreen törlése, majd újrameghívása
-    main.innerHTML = ""
+    main.innerHTML = ''
     const divDesc = document.createElement('div')
     divDesc.innerHTML = `<h1>A játék leírása</h1>
     <p>A <b>katakomba</b> szobáit egy 7x7-es négyzetrács cellái jelképezik. Minden szobában adott, hogy hány falán van ajtó. Ha két szomszédos szoba érintkező falán egy-egy ajtó van, akkor át lehet menni egyik szobából a másikba. A négyzetrács páros sorait és oszlopait el lehet tolni, a többi szoba végig rögzített a játék során. Az eltolásokkal az ajtókon keresztül utak nyílnak a szobák között, így lehet eljutni a kincsekhez. Mindegyik kérő arra törekszik, hogy a katakomba szobáinak ötletes eltolásával eljusson a kincsekhez. Aki elsőként találja meg mindahányat és kiindulópontjára sikeresen visszaérkezik az a nyertes.</p>`
@@ -81,7 +81,7 @@ function desc() {
 
     // btnBack
     const btnBack = document.createElement('button')
-    btnBack.innerHTML = "Vissza"
+    btnBack.innerHTML = 'Vissza'
     btnBack.addEventListener('click', startScreen)
     main.appendChild(btnBack);
 }
@@ -147,7 +147,7 @@ let arrRooms = [
 
 function startGame() {
     // div, jó sok divvel
-    main.innerHTML = ""
+    main.innerHTML = ''
 
     const game = document.createElement('div')
     game.id = 'game'
@@ -176,15 +176,20 @@ function startGame() {
 
     // btnBalra
     const btnLeft = document.createElement('button')
-    btnLeft.innerHTML = "Balra"
+    btnLeft.innerHTML = 'Balra'
     btnLeft.addEventListener('click', rotateLeft)
     divSepar.appendChild(btnLeft);
 
     // btnJobbra
     const btnRight = document.createElement('button')
-    btnRight.innerHTML = "Balra"
+    btnRight.innerHTML = 'Jobbra'
     btnRight.addEventListener('click', rotateRight)
     divSepar.appendChild(btnRight);
+
+    // labelRotate
+    const labelRotate = document.createElement('label')
+    labelRotate.innerHTML = 'Forgatás'
+    divSepar.appendChild(labelRotate)
 
     game.appendChild(divSepar)
     main.appendChild(game)
