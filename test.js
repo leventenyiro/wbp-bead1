@@ -66,7 +66,11 @@ function randomEven(min, max) {
     return rnd % 2 == 1 ? rnd : randomEven(min, max)
 }*/
 
-let x = 1;
+/*let x = 1;
 if (--x != 0) {
     console.log("valami");
-}
+}*/
+
+var id = 0;
+id++
+console.log(id);

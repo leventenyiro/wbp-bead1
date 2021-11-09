@@ -58,15 +58,15 @@
 }
 
 .selectPush {
-  -webkit-box-shadow: inset 0 0 4px 4px violet;
-          box-shadow: inset 0 0 4px 4px violet;
+  -webkit-box-shadow: inset 0 0 4px 4px magenta;
+          box-shadow: inset 0 0 4px 4px magenta;
   -webkit-transition: 0.3s;
   transition: 0.3s;
 }
 
 .selectPush:hover {
-  -webkit-box-shadow: inset 0 0 8px 8px violet;
-          box-shadow: inset 0 0 8px 8px violet;
+  -webkit-box-shadow: inset 0 0 8px 8px magenta;
+          box-shadow: inset 0 0 8px 8px magenta;
   -webkit-transition: 0.3s;
   transition: 0.3s;
 }
