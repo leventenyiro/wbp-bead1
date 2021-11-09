@@ -202,11 +202,11 @@ function startGame() {
             if (((i == 0 || i == 8) && j % 2 == 0 && j != 0 && j != 8) || (i % 2 == 0 && i != 0 && i != 8 && (j == 0 || j == 8))) {
                 div.classList.add('arrow')
                 if (i == 0)
-                    div.style.transform = 'rotate(180px)'
+                    div.style.transform = 'rotate(180deg)'
                 else if (j == 0)
-                    div.style.transform = 'rotate(90px)'
+                    div.style.transform = 'rotate(90deg)'
                 else if (j == 8)
-                    div.style.transform = 'rotate(270px)'
+                    div.style.transform = 'rotate(270deg)'
             } else if (i > 0 && i < 8 && j > 0 && j < 8)
                 div.classList.add('room')
             else
