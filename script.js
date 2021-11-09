@@ -1,4 +1,7 @@
 const main = document.querySelector('#main')
+// game
+var turn = 0
+var turnPart = 0
 // rotations
 const UP = 0
 const RIGHT = 1
@@ -11,7 +14,7 @@ const T = 2
 var roomId = 0
 var prevPush = {row: -1, col: -1}
 // játékosok
-const PLAYERS = ['red', 'blue', 'green', 'purple']
+var arrPlayers = []
 // infók
 var player
 var numberCards
@@ -87,7 +90,7 @@ function desc() {
 }
 
 class Room {
-    constructor (row, col, type, rot) {
+    constructor(row, col, type, rot) {
         this.id = roomId++
         this.row = row
         this.col = col
@@ -119,6 +122,29 @@ class Room {
 
     setRotate(rot) {
         this.rot = rot
+    }
+
+    getWays() {
+        // merre lehet menni?
+    }
+}
+
+class Player {
+    constructor(id, row, col) {
+        this.row = row
+        this.col = col
+        this.id = id
+        switch(this.id) {
+            case 0: this.color = 'red'; break;
+            case 1: this.color = 'blue'; break;
+            case 2: this.color = 'green'; break;
+            default: this.color = 'purple'; break;
+        }
+    }
+
+    setPosition(row, col) {
+        this.row = row
+        this.col = col
     }
 }
 
@@ -197,16 +223,13 @@ function startGame() {
     // random szobák generálása
     randomRooms()
 
+    // játékosok létrehozása
+    for (let i = 0; i < player; i++) {
+        arrPlayers.push(new Player(i, arrRooms[i].row, arrRooms[i].col))
+    }
+
     // kártyák behelyettesítése
     showBoard()
-
-    // játékosok rögzítése
-    for (let i = 0; i < player; i++) {
-        const divPlayer = document.createElement('div')
-        divPlayer.classList.add('player')
-        divPlayer.style.backgroundColor = PLAYERS[i]
-        board.querySelectorAll('.row')[arrRooms[i].row].querySelectorAll('.room')[arrRooms[i].col].appendChild(divPlayer)
-    }
 
     // kincsek kiosztása
     let playerId = 0;
@@ -262,9 +285,11 @@ function getRoom(row, col) {
 }
 
 function showBoard() {
+    const board = main.querySelector('#game #board')
+    // szobák mutatása
     for (let e of arrRooms) {
         if (e.row != -1) {
-            var room = main.querySelector('#game #board').querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col]
+            var room = board.querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col]
             room.removeEventListener('click', pushRoom)
             if ((e.row != prevPush.row || e.col != prevPush.col) && ((e.row % 2 == 1 && (e.col == 0 || e.col == 6)) || (e.col % 2 == 1 && (e.row == 0 || e.row == 6)))) {
                 room.classList.add('selectPush')
@@ -279,11 +304,28 @@ function showBoard() {
         room.style.transform = `rotate(${e.rot * 90}deg)`
         room.dataset.id = e.id
     }
+
+    // játékosok mutatása
+    for (e of arrPlayers) {
+        const divPlayer = document.createElement('div')
+        divPlayer.classList.add('player')
+        if (turn == e.id) {
+            setInterval(() => {
+                divPlayer.style.transition = '0.2s'
+                if (!divPlayer.style.boxShadow)
+                    divPlayer.style.boxShadow = `0 0 0 8px white`
+                else
+                    divPlayer.style.boxShadow = null
+            }, 450)
+
+        }
+        divPlayer.style.backgroundColor = e.color
+        board.querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col].appendChild(divPlayer)
+    }
 }
 
 // rotate
 document.addEventListener('keydown', (event) => {
-    console.log(event.key)
     if (event.key == 'ArrowLeft')
         rotateLeft()
     else if (event.key == 'ArrowRight')
@@ -332,9 +374,7 @@ function pushRoom(event) {
             arrRooms[room.dataset.id].setPosition(e.row, i + multiply)
             //room.style.transition = '2s'
         }
-        const oldSeparate = 
         getRoom(-1, -1).setPosition(e.row, multiply == 1 ? 0 : 6)
-        const newSeparate = 
         getRoom(e.row, multiply == 1 ? 7 : -1).setPosition(-1, -1)
     }
 

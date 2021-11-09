@@ -18,7 +18,7 @@ Minimálisan teljesítendő (enélkül nem fogadjuk el, 8 pont)
 [x] Játéktér: Ugyanebben a rácsban megjelennek véletlenszerűen forgatva és elhelyezve a mozgatható elemek. (2 pont)
 [x] Játéktér: A rácsra fel van helyezve legalább 3 kincs véletlen helyre (kivéve a sarkokat) (0,5 pont)
 [x] Játéktér: A rácsra fel van helyezve legalább 1 játékos figurája (0,5 pont)
-[ ] Katakomba átalakítása: A kimaradt szoba becsúsztatható egy mozgatható sorba vagy oszlopba. A katakomba szobái helyesen változnak. (2 pont)
+[x] Katakomba átalakítása: A kimaradt szoba becsúsztatható egy mozgatható sorba vagy oszlopba. A katakomba szobái helyesen változnak. (2 pont)
 [ ] Lépés: A figurával szabályosan lehet lépni a szomszédos mező valamelyikére. (2 pont)
 
 Az alap feladatok (12 pont)
