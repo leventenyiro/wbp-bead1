@@ -5,10 +5,11 @@ const RIGHT = 1
 const DOWN = 2
 const LEFT = 3
 // rooms
-var roomId = 0
 const LINE = 0
 const CORNER = 1
 const T = 2
+var roomId = 0
+var prevPush = {row: -1, col: -1}
 // játékosok
 const PLAYERS = ['red', 'blue', 'green', 'purple']
 // infók
@@ -237,13 +238,12 @@ function getRoom(row, col) {
 }
 
 function showBoard() {
-    console.log(arrRooms);
     for (let e of arrRooms) {
         if (e.row != -1) {
             var room = main.querySelector('#game #board').querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col]
-            if ((e.row % 2 == 1 && (e.col == 0 || e.col == 6)) || (e.col % 2 == 1 && (e.row == 0 || e.row == 6))) {
+            room.removeEventListener('click', pushRoom)
+            if ((e.row != prevPush.row || e.col != prevPush.col) && ((e.row % 2 == 1 && (e.col == 0 || e.col == 6)) || (e.col % 2 == 1 && (e.row == 0 || e.row == 6)))) {
                 room.classList.add('selectPush')
-                //room.removeEventListener('click', pushRoom)
                 room.addEventListener('click', pushRoom)
             } else {
                 room.classList.remove('selectPush')
@@ -264,6 +264,10 @@ function pushRoom(event) {
     const board = main.querySelector('#game #board')
     if (direction % 2 == 0) { // col fix
         const multiply = direction == 0 ? 1 : -1
+
+        prevPush.row = e.row + multiply * 6
+        prevPush.col = e.col
+
         for (let i = 0; i < 7; i++) {
             const room = board.querySelectorAll('.row')[i].querySelectorAll('.room')[e.col]
             arrRooms[room.dataset.id].setRoom(i + multiply, e.col, arrRooms[room.dataset.id].rot)
@@ -275,6 +279,10 @@ function pushRoom(event) {
         newSeparate.setRoom(-1, -1, newSeparate.rot)
     } else { // row fix
         const multiply = direction == 3 ? 1 : -1
+
+        prevPush.row = e.row
+        prevPush.col = e.col + multiply * 6
+        
         const rooms = board.querySelectorAll('.row')[e.row].querySelectorAll('.room')
         for (let i = 0; i < 7; i++) {
             const room = rooms[i]
