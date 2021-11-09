@@ -49,6 +49,17 @@
   border-radius: 5px;
 }
 
+#board .room .gold {
+  width: 20px;
+  height: 20px;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  border-radius: 5px;
+  background-color: orange;
+  -webkit-box-shadow: 0 0 10px 10px yellow;
+          box-shadow: 0 0 10px 10px yellow;
+}
+
 #board .arrow {
   -webkit-transition: 0.2s;
   transition: 0.2s;
@@ -81,17 +92,6 @@
   width: 70px;
   height: 70px;
   background-size: cover;
-}
-
-.gold {
-  width: 20px;
-  height: 20px;
-  -webkit-transform: rotate(45deg);
-          transform: rotate(45deg);
-  border-radius: 5px;
-  background-color: orange;
-  -webkit-box-shadow: 0 0 10px 10px yellow;
-          box-shadow: 0 0 10px 10px yellow;
 }
 
 .selectPush {

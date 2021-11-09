@@ -41,6 +41,15 @@
             height: 20px;
             border-radius: 5px;
         }
+
+        .gold {
+            width: 20px;
+            height: 20px;
+            transform: rotate(45deg);
+            border-radius: 5px;
+            background-color: orange;
+            box-shadow: 0 0 10px 10px yellow;
+        }
     }
 
     .arrow {
@@ -75,15 +84,6 @@
     width: 70px;
     height: 70px;
     background-size: cover;
-}
-
-.gold {
-    width: 20px;
-    height: 20px;
-    transform: rotate(45deg);
-    border-radius: 5px;
-    background-color: orange;
-    box-shadow: 0 0 10px 10px yellow;
 }
 
 .selectPush {
