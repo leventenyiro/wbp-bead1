@@ -178,15 +178,39 @@ function startGame() {
     const game = document.createElement('div')
     game.id = 'game'
 
+    // headerArrow
+    /*const headerRow = document.createElement('div')
+    headerRow.classList.add('row')
+    for (let i = 0; i < 9; i++) {
+        const div = document.createElement('div')
+        div.classList.add('room')
+        if (i % 2 == 1) {
+            div.classList.add('arrow')
+        }
+        headerRow.appendChild(div)
+    }
+    game.appendChild(headerRow)*/
+
     const board = document.createElement('div')
     board.id = 'board'
 
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 9; i++) {
         const row = document.createElement('div')
         row.classList.add('row')
-        for (let j = 0; j < 7; j++) {
+        for (let j = 0; j < 9; j++) {
             const div = document.createElement('div')
-            div.classList.add('room')
+            if (((i == 0 || i == 8) && j % 2 == 0 && j != 0 && j != 8) || (i % 2 == 0 && i != 0 && i != 8 && (j == 0 || j == 8))) {
+                div.classList.add('arrow')
+                if (i == 0)
+                    div.style.transform = 'rotate(180px)'
+                else if (j == 0)
+                    div.style.transform = 'rotate(90px)'
+                else if (j == 8)
+                    div.style.transform = 'rotate(270px)'
+            } else if (i > 0 && i < 8 && j > 0 && j < 8)
+                div.classList.add('room')
+            else
+                div.classList.add('empty')
             row.appendChild(div)
         }
         board.appendChild(row)
@@ -229,7 +253,7 @@ function startGame() {
     }
 
     // kártyák behelyettesítése
-    showBoard()
+    //showBoard()
 
     // kincsek kiosztása
     let playerId = 0;
@@ -248,7 +272,7 @@ function startGame() {
     }
 
     // kincsek mutatása - teszt
-    showGold(0)
+    //showGold(0)
 
     // játékosinfók - game gyereke lesz
     showInfo()

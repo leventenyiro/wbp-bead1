@@ -19,20 +19,41 @@
         //height: 100px;
         //position: relative;
         display: flex;
+
+        div {
+            width: 70px;
+            height: 70px;
+            margin: 3px;
+        }
+    }
+
+    .room {
+        background-color: red;
+        //border: 1px solid black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-size: cover;
+        border-radius: 10px;
+    }
+
+    .arrow {
+        background-image: url('../img/arrow.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+        transform: rotate(270deg);
+        //background-color: green;
+    }
+
+    .empty {
+        width: 70px;
+        height: 70px;
     }
 }
 
-.room {
-    //border: 1px solid black;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 3px;
-    background-size: cover;
-    border-radius: 10px;
-}
+
+
+
 
 .player {
     width: 20px;
