@@ -21,4 +21,6 @@ Katakomba tolás
 Nyilak
 Léptetés (Nem mindegy hova)
 
+HIBA: kincstolásnál
+
 setRoom átalakítása?

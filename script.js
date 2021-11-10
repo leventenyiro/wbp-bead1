@@ -19,7 +19,7 @@ var arrPlayers = []
 var goldId = 0
 var arrGolds = []
 // infók
-var player
+var numberPlayer
 var numberCards
 
 // kezdőképernyő - új játék, leírás
@@ -62,7 +62,7 @@ function startScreen() {
     const btnStartGame = document.createElement('button')
     btnStartGame.innerHTML = 'Játék indítása'
     btnStartGame.addEventListener('click', (event) => {
-        player = inputPlayers.value
+        numberPlayer = inputPlayers.value
         numberCards = inputNumberCards.value
         startGame()
     })
@@ -171,6 +171,10 @@ class Player { // hány kincset talált meg
         this.row = row
         this.col = col
     }
+
+    getColor() {
+        return this.color
+    }
 }
 
 class Gold {
@@ -239,14 +243,12 @@ function startGame() {
     // btnBalra
     const btnLeft = document.createElement('button')
     btnLeft.innerHTML = 'Balra'
-    //btnLeft.id = 'rotateLeft'
     btnLeft.addEventListener('click', rotateLeft)
     divSepar.appendChild(btnLeft);
 
     // btnJobbra
     const btnRight = document.createElement('button')
     btnRight.innerHTML = 'Jobbra'
-    //btnLeft.id = 'rotateRight'
     btnRight.addEventListener('click', rotateRight)
     divSepar.appendChild(btnRight);
 
@@ -262,7 +264,7 @@ function startGame() {
     randomRooms()
 
     // játékosok létrehozása
-    for (let i = 0; i < player; i++) {
+    for (let i = 0; i < numberPlayer; i++) {
         arrPlayers.push(new Player(i, arrRooms[i].row, arrRooms[i].col))
     }
 
@@ -272,10 +274,10 @@ function startGame() {
     // kártyák behelyettesítése
     showBoard()
 
-    // kincsek mutatása - teszt
-    //showGold(0)
-
     // játékosinfók - game gyereke lesz
+    const info = document.createElement('div')
+    info.id = 'info'
+    main.appendChild(info)
     showInfo()
 }
 
@@ -334,7 +336,7 @@ function randomRooms() {
 }
 
 function randomGolds() {
-    for (let i = 0; i < player; i++) {
+    for (let i = 0; i < numberPlayer; i++) {
         for (let j = 0; j < numberCards; j++) {
             let rndRoom = random(4, 48)
             while (getGold(arrRooms[rndRoom].row, arrRooms[rndRoom].col) != null) {
@@ -391,7 +393,6 @@ function showBoard() {
         room.innerHTML = ''
         room.appendChild(divPlayer)
     }
-    console.log(turn);
     if (turnPart == 0) {
         // nyilakra kattintás
         for (let e of board.querySelectorAll('.arrow')) {
@@ -403,16 +404,20 @@ function showBoard() {
                 e.classList.remove('arrowEnabled')
             }
         }
-        
-
     } else {
         // lépés
         showAvailableRooms(arrPlayers[turn].row, arrPlayers[turn].col, -1, arrPlayers[turn])
-        turn = turn + 1 < player ? turn + 1 : 0
-        turnPart = 0
     }
+}
 
-
+function deleteGold() {
+    for (let e of arrGolds) {
+        if (e.playerId == turn && arrPlayers[turn].row == e.row && arrPlayers[turn].col == e.col) {
+            console.log('törölve');
+            arrGolds.splice(arrGolds.indexOf(e) , 1)
+            break;
+        }
+    }
 }
 
 function showAvailableNeighbours(row, col) {
@@ -429,35 +434,6 @@ function showAvailableNeighbours(row, col) {
     }
     return path
 }
-
-/*function getAvailableRooms(row, col, from) {
-    //if (from == null)
-    //    from = 0
-    // rekurzív hívás
-    // 4 irány
-    //console.log(getRoom(row, col).id)
-    const ways = getRoom(row, col).getWays()
-    //console.log(ways);
-    const actual = getRoom(row, col).id
-    console.log(actual);
-    let arr = []
-        if (from != 0 && ways.includes(0) && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
-            arr.push(showAvailableRooms(row - 1, col, 2))
-        if (from != 1 && ways.includes(1) && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
-            arr.push(showAvailableRooms(row, col + 1, 3))
-        if (from != 2 && ways.includes(2) && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
-            arr.push(showAvailableRooms(row + 1, col, 0))
-        if (from != 3 && ways.includes(3) && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
-            arr.push(showAvailableRooms(row, col - 1, 1))
-
-        //arr = [arr, getRoom(row, col).id]
-        let newArr = []
-        for (let e of arr) {
-            newArr.push(e)
-        }
-        newArr.push(actual)
-        return newArr
-}*/
 
 function showAvailableRooms(row, col, from, player) {
     const ways = getRoom(row, col).getWays()
@@ -476,7 +452,12 @@ function showAvailableRooms(row, col, from, player) {
     room.classList.add('availablePath')
     room.addEventListener('click', () => {
         player.setPosition(row, col)
-        showBoard() // inkább changePos
+        deleteGold()
+        showInfo()
+        turn = turn + 1 < numberPlayer ? turn + 1 : 0
+        turnPart = 0
+        showBoard() // inkább changePos kéne
+        isWon() // nyert-e valaki
     })
 }
 
@@ -583,7 +564,7 @@ function pushRoom(event) {
             }
         }
         // kincs letolása
-        for (let g of arrPlayers) {
+        for (let g of arrGolds) {
             if (g.row == newSeparate.row && g.col == newSeparate.col) {
                 g.setPosition(g.row, multiply == 1 ? 0 : 6)
             }
@@ -604,22 +585,60 @@ function showGold(playerId) {
     }
 }
 
+function getFoundGolds(playerId) {
+    let goldsOfPlayer = 0
+    for (let e of arrGolds) {
+        if (e.playerId == playerId)
+            goldsOfPlayer++
+    }
+    return numberCards - goldsOfPlayer
+}
+
 function showInfo() {
-    const info = document.createElement('div')
-    info.id = 'info'
-    
+
+    const info = document.querySelector('#info')
+    info.innerHTML = ''
     const divPlayers = document.createElement('div')
     divPlayers.id = 'divPlayers'
-    for (let i = 0; i < player; i++) {
+    for (let i = 0; i < numberPlayer; i++) {
         const divPlayer = document.createElement('div');
         divPlayer.innerHTML = `
             <h2>Player ${i + 1}</h2>
-            <p>Found</p>
+            <p>Found ${getFoundGolds(i)} / ${numberCards}</p>
         `
         divPlayers.appendChild(divPlayer)
     }
     info.appendChild(divPlayers)
-    main.appendChild(info)
+}
+
+function isWon() { // ha visszaáll a kezdőpoziba és minden kincset megtalált
+    for (let e of arrPlayers) {
+        if (e.row == arrRooms[e.id].row && e.col == arrRooms[e.id].col && getFoundGolds(e.id) == numberCards) {
+            console.log('nyert');
+            turnPart = 2
+            showWin(e)
+        }
+    }
+}
+
+function showWin(player) {
+    let str = ''
+    switch (player.getColor()) {
+        case 'red':
+            str += 'Piros'
+            break;
+        case 'blue':
+            str += 'Kék'
+            break;
+        case 'green':
+            str += 'Zöld'
+            break;
+        default:
+            str += 'Lila'
+            break;
+    }
+    str += ' játékos nyert!'
+    alert(str)
 }
 
 startScreen()

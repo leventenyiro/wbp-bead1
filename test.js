@@ -71,6 +71,10 @@ if (--x != 0) {
     console.log("valami");
 }*/
 
-var id = 0;
+/*var id = 0;
 id++
-console.log(id);
+console.log(id);*/
+
+arr = [1,2,3]
+arr.splice(arr.indexOf(2) , 1)
+console.log(arr.reduce((cnt, cur) => cur < 2 ? cnt + cur : cnt));
