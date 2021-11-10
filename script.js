@@ -265,27 +265,10 @@ function startGame() {
     }
 
     // kincsek kiosztása
-    let playerId = 0;
-    let numberCardsPerPlayer = 0
-    for (let i = 0; i < numberCards; i++) {
-        let rndRoom = random(4, 48)
-        //while (arrRooms[rndRoom].gold != undefined) {
-        while (getGold(arrRooms[rndRoom].row, arrRooms[rndRoom].col) != null) {
-            rndRoom = random(4, 48)
-        }
-        //arrRooms[rndRoom].gold = playerId
-        arrGolds.push(new Gold(playerId, arrRooms[rndRoom].row, arrRooms[rndRoom].col))
-
-        if (numberCardsPerPlayer == numberCards / player) {
-            playerId++
-            numberCardsPerPlayer = 0
-        }
-    }
+    randomGolds()
 
     // kártyák behelyettesítése
     showBoard()
-
-    //console.log(arrRooms[0]);
 
     // kincsek mutatása - teszt
     //showGold(0)
@@ -348,6 +331,18 @@ function randomRooms() {
     arrRooms.push(new Room(-1, -1, types.findIndex((e) => e > 0), random(0, 3)))
 }
 
+function randomGolds() {
+    for (let i = 0; i < player; i++) {
+        for (let j = 0; j < numberCards; j++) {
+            let rndRoom = random(4, 48)
+            while (getGold(arrRooms[rndRoom].row, arrRooms[rndRoom].col) != null) {
+                rndRoom = random(4, 48)
+            }
+            arrGolds.push(new Gold(i, arrRooms[rndRoom].row, arrRooms[rndRoom].col))
+        }
+    }
+}
+
 function random(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -362,7 +357,7 @@ function getRoom(row, col) {
 
 function showBoard() {
     initRooms()
-    showGold(0)
+    showGold(turn)
     const board = main.querySelector('#game #board')
     for (let e of arrRooms) {
         if (e.row != -1) {
