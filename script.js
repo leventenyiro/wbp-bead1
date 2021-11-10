@@ -65,8 +65,17 @@ function startScreen() {
         numberPlayer = inputPlayers.value
         numberCards = inputNumberCards.value
         startGame()
+        initNewGame()
+        showBoard()
     })
     divSettings.appendChild(btnStartGame);
+
+    // btnLoadGame
+    const btnLoadGame = document.createElement('button')
+    btnLoadGame.innerHTML = 'Mentett játék betöltése'
+    btnLoadGame.addEventListener('click', loadGame)
+    btnLoadGame.disabled = window.localStorage.length == 0
+    divSettings.appendChild(btnLoadGame);
 
     // leírás
     const btnDesc = document.createElement('button')
@@ -98,25 +107,7 @@ class Room {
         this.row = row
         this.col = col
         this.type = type
-        switch (type) {
-            case 0:
-                this.img = new Image()
-                this.img.src = 'img/line.png'
-                break;
-            case 1:
-                this.img = new Image()
-                this.img.src = 'img/corner.png'
-                break;
-            case 2:
-                this.img = new Image()
-                this.img.src = 'img/t.png'
-                break;
-        }
         this.rot = rot
-    }
-
-    setGold(playerId) {
-        this.gold = playerId;
     }
 
     setPosition(row, col) {
@@ -129,9 +120,6 @@ class Room {
     }
 
     getWays() {
-        // merre lehet menni? - a másik oldal is ugyanolyan?
-        // UP RIGHT DOWN LEFT
-        // egy listát ad vissza
         if (this.type == LINE) {
             if (this.rot == 0 || this.rot == 2)
                 return [RIGHT, LEFT]
@@ -200,28 +188,31 @@ function getGold(row, col) { // ez lehetne egyesíteni a másik keresőssel
     return null
 }
 
-let arrRooms = [
-    new Room(0, 0, CORNER, UP),
-    new Room(0, 6, CORNER, RIGHT),
-    new Room(6, 6, CORNER, DOWN),
-    new Room(6, 0, CORNER, LEFT),
-
-    new Room(0, 2, T, UP),
-    new Room(0, 4, T, UP),
-
-    new Room(2, 0, T, LEFT),
-    new Room(2, 2, T, LEFT),
-    new Room(2, 4, T, UP),
-    new Room(2, 6, T, RIGHT),
-
-    new Room(4, 0, T, LEFT),
-    new Room(4, 2, T, DOWN),
-    new Room(4, 4, T, RIGHT),
-    new Room(4, 6, T, RIGHT),
-
-    new Room(6, 2, T, DOWN),
-    new Room(6, 4, T, DOWN),
-]
+function initFixRooms() {
+    roomId = 0
+    return [
+        new Room(0, 0, CORNER, UP),
+        new Room(0, 6, CORNER, RIGHT),
+        new Room(6, 6, CORNER, DOWN),
+        new Room(6, 0, CORNER, LEFT),
+    
+        new Room(0, 2, T, UP),
+        new Room(0, 4, T, UP),
+    
+        new Room(2, 0, T, LEFT),
+        new Room(2, 2, T, LEFT),
+        new Room(2, 4, T, UP),
+        new Room(2, 6, T, RIGHT),
+    
+        new Room(4, 0, T, LEFT),
+        new Room(4, 2, T, DOWN),
+        new Room(4, 4, T, RIGHT),
+        new Room(4, 6, T, RIGHT),
+    
+        new Room(6, 2, T, DOWN),
+        new Room(6, 4, T, DOWN),
+    ]
+}
 
 function startGame() {
     main.innerHTML = ''
@@ -260,25 +251,24 @@ function startGame() {
     game.appendChild(divSepar)
     main.appendChild(game)
 
+    // játékosinfók - game gyereke lesz
+    const info = document.createElement('div')
+    info.id = 'info'
+    main.appendChild(info)
+}
+
+function initNewGame() {
     // random szobák generálása
     randomRooms()
 
     // játékosok létrehozása
+    arrPlayers = []
     for (let i = 0; i < numberPlayer; i++) {
         arrPlayers.push(new Player(i, arrRooms[i].row, arrRooms[i].col))
     }
 
     // kincsek kiosztása
     randomGolds()
-
-    // kártyák behelyettesítése
-    showBoard()
-
-    // játékosinfók - game gyereke lesz
-    const info = document.createElement('div')
-    info.id = 'info'
-    main.appendChild(info)
-    showInfo()
 }
 
 function initRooms() {
@@ -318,6 +308,7 @@ function initRooms() {
 }
 
 function randomRooms() {
+    arrRooms = initFixRooms()
     let types = [13, 15, 6]
     
     for (let i = 0; i < 7; i++) {
@@ -336,6 +327,7 @@ function randomRooms() {
 }
 
 function randomGolds() {
+    arrGolds = []
     for (let i = 0; i < numberPlayer; i++) {
         for (let j = 0; j < numberCards; j++) {
             let rndRoom = random(4, 48)
@@ -360,6 +352,7 @@ function getRoom(row, col) {
 }
 
 function showBoard() {
+    showInfo()
     initRooms()
     showGold(turn)
     const board = main.querySelector('#game #board')
@@ -369,7 +362,7 @@ function showBoard() {
         } else
             var room = document.querySelector('#separRoom')
 
-        room.style.backgroundImage = `url(${e.img.src})`
+        room.style.backgroundImage = `url(img/room${e.type}.png)`
         room.style.transform = `rotate(${e.rot * 90}deg)`
         room.dataset.id = e.id
     }
@@ -420,21 +413,6 @@ function deleteGold() {
     }
 }
 
-function showAvailableNeighbours(row, col) {
-    let path = []
-    for (let e of getRoom(row, col).getWays()) {
-        if (e == 0 && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
-            path.push(getRoom(row - 1, col))
-        if (e == 1 && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
-            path.push(getRoom(row, col + 1))
-        if (e == 2 && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
-            path.push(getRoom(row + 1, col))
-        if (e == 3 && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
-            path.push(getRoom(row, col - 1))
-    }
-    return path
-}
-
 function showAvailableRooms(row, col, from, player) {
     const ways = getRoom(row, col).getWays()
     const actual = getRoom(row, col)
@@ -456,7 +434,7 @@ function showAvailableRooms(row, col, from, player) {
         showInfo()
         turn = turn + 1 < numberPlayer ? turn + 1 : 0
         turnPart = 0
-        showBoard() // inkább changePos kéne
+        showBoard()
         isWon() // nyert-e valaki
     })
 }
@@ -495,7 +473,6 @@ function pushRoom(event) {
         for (let i = 0; i < 7; i++) {
             const room = board.querySelectorAll('.row')[i + 1].querySelectorAll('.room')[parseInt(e.col)]
             arrRooms[room.dataset.id].setPosition(i + multiply, parseInt(e.col))
-            //room.style.transition = '2s'
         }
 
         // játékos tolása
@@ -601,7 +578,7 @@ function showInfo() {
     const divPlayers = document.createElement('div')
     divPlayers.id = 'divPlayers'
     for (let i = 0; i < numberPlayer; i++) {
-        const divPlayer = document.createElement('div');
+        const divPlayer = document.createElement('div')
         divPlayer.innerHTML = `
             <h2>Player ${i + 1}</h2>
             <p>Found ${getFoundGolds(i)} / ${numberCards}</p>
@@ -609,9 +586,24 @@ function showInfo() {
         divPlayers.appendChild(divPlayer)
     }
     info.appendChild(divPlayers)
+
+    // settings
+    const divSettings = document.createElement('div')
+    
+    const btnSave = document.createElement('button')
+    btnSave.innerHTML = 'Mentés és kilépés'
+    btnSave.addEventListener('click', saveGame)
+    divSettings.appendChild(btnSave)
+
+    const btnNewGame = document.createElement('button')
+    btnNewGame.innerHTML = 'Új játék'
+    btnNewGame.addEventListener('click', startScreen)
+    divSettings.appendChild(btnNewGame)
+
+    info.appendChild(divSettings)
 }
 
-function isWon() { // ha visszaáll a kezdőpoziba és minden kincset megtalált
+function isWon() {
     for (let e of arrPlayers) {
         if (e.row == arrRooms[e.id].row && e.col == arrRooms[e.id].col && getFoundGolds(e.id) == numberCards) {
             console.log('nyert');
@@ -639,6 +631,47 @@ function showWin(player) {
     }
     str += ' játékos nyert!'
     alert(str)
+    startScreen()
+}
+
+function saveGame() {
+    saveStorage = window.localStorage
+    saveStorage.clear()
+    saveStorage.setItem('turn', turn)
+    saveStorage.setItem('turnPart', turnPart)
+    saveStorage.setItem('prevPush', JSON.stringify(prevPush))
+    saveStorage.setItem('arrRooms', JSON.stringify(arrRooms))
+    saveStorage.setItem('arrPlayers', JSON.stringify(arrPlayers))
+    saveStorage.setItem('arrGolds', JSON.stringify(arrGolds))
+    saveStorage.setItem('numberPlayer', numberPlayer)
+    saveStorage.setItem('numberCards', numberCards)
+    startScreen()
+}
+
+function loadGame(event) {
+    startGame()
+    saveStorage = window.localStorage
+    turn = parseInt(saveStorage.getItem('turn'))
+    turnPart = parseInt(saveStorage.getItem('turnPart'))
+    prevPush = JSON.parse(saveStorage.getItem('prevPush'))
+    roomId = 0
+    arrRooms = []
+    for (let e of JSON.parse(saveStorage.getItem('arrRooms'))) {
+        arrRooms.push(new Room(e.row, e.col, e.type, e.rot))
+    }
+    playerId = 0
+    arrPlayers = []
+    for (let e of JSON.parse(saveStorage.getItem('arrPlayers'))) {
+        arrPlayers.push(new Player(e.id, e.row, e.col))
+    }
+    goldId = 0
+    arrGolds = []
+    for (let e of JSON.parse(saveStorage.getItem('arrGolds'))) {
+        arrGolds.push(new Gold(e.playerId, e.row, e.col))
+    }
+    numberPlayer = parseInt(saveStorage.getItem('numberPlayer'))
+    numberCards = parseInt(saveStorage.getItem('numberCards'))
+    showBoard()
 }
 
 startScreen()

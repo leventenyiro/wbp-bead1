@@ -21,6 +21,21 @@ Katakomba tolás
 Nyilak
 Léptetés (Nem mindegy hova)
 
-HIBA: kincstolásnál
+Mentés:
+    Miket?
+        turn
+        turnPart
+        prevPush
+        arrPlayers
+        arrRooms
+        arrGolds
+        numberPlayer
+        numberCards
+
+Betöltés:
+    el kell különíteni a játékinicilizálást és a generálást
+    Miért mutat -1/1 -et
+
+BUG: ugye nem esik ciklikusságba? - de
 
 setRoom átalakítása?
