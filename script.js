@@ -431,7 +431,7 @@ function showBoard() {
             showBoard()
         }
     })*/
-    showAvailableRooms(0, 0, -1, player)
+    showAvailableRooms(player.row, player.col, -1, player)
 }
 
 function showAvailableNeighbours(row, col) {
@@ -494,7 +494,7 @@ function showAvailableRooms(row, col, from, player) {
     const room = document.querySelector('#game #board').querySelectorAll('.row')[actual.row + 1].querySelectorAll('.room')[actual.col]
     room.classList.add('availablePath')
     room.addEventListener('click', () => {
-        player.setPosition(e.row, e.col)
+        player.setPosition(row, col)
         showBoard() // inkább changePos
     })
 }
@@ -609,7 +609,6 @@ function pushRoom(event) {
         }
         newSeparate.setPosition(-1, -1)
     }
-
     showBoard()
 }
 
