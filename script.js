@@ -239,12 +239,14 @@ function startGame() {
     // btnBalra
     const btnLeft = document.createElement('button')
     btnLeft.innerHTML = 'Balra'
+    //btnLeft.id = 'rotateLeft'
     btnLeft.addEventListener('click', rotateLeft)
     divSepar.appendChild(btnLeft);
 
     // btnJobbra
     const btnRight = document.createElement('button')
     btnRight.innerHTML = 'Jobbra'
+    //btnLeft.id = 'rotateRight'
     btnRight.addEventListener('click', rotateRight)
     divSepar.appendChild(btnRight);
 
@@ -370,18 +372,6 @@ function showBoard() {
         room.dataset.id = e.id
     }
 
-    // nyilakra kattintás
-    for (let e of board.querySelectorAll('.arrow')) {
-        e.removeEventListener('click', pushRoom)
-        if (parseInt(e.dataset.row) !== prevPush.row || parseInt(e.dataset.col) !== prevPush.col) {
-            e.addEventListener('click', pushRoom)
-            e.classList.add('arrowEnabled')
-        } else {
-            e.classList.remove('arrowEnabled')
-        }
-
-    }
-
     // játékosok mutatása
     for (e of arrPlayers) {
         const divPlayer = document.createElement('div')
@@ -401,32 +391,28 @@ function showBoard() {
         room.innerHTML = ''
         room.appendChild(divPlayer)
     }
-
-    // lépés
-    let player = arrPlayers[0]
-
-    /*path = showAvailableNeighbours(player.row, player.col)
-    for (let e of path) {
-        const room = board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col]
-        room.classList.add('availablePath')
-        room.addEventListener('click', () => {
-            player.setPosition(e.row, e.col)
-            showBoard() // inkább changePos
-        })
-    }*/
-
-    // utak mutatása - később, ha turnPart == 1
-    //let ways = showAvailableRooms(0, 5)
-    //console.log(ways)
-
-    /*document.addEventListener('keydown', (e) => {
-        console.log(e.key);
-        if (e.key == 'f') {
-            player.setPosition(2,0)
-            showBoard()
+    console.log(turn);
+    if (turnPart == 0) {
+        // nyilakra kattintás
+        for (let e of board.querySelectorAll('.arrow')) {
+            e.removeEventListener('click', pushRoom)
+            if (parseInt(e.dataset.row) !== prevPush.row || parseInt(e.dataset.col) !== prevPush.col) {
+                e.addEventListener('click', pushRoom)
+                e.classList.add('arrowEnabled')
+            } else {
+                e.classList.remove('arrowEnabled')
+            }
         }
-    })*/
-    showAvailableRooms(player.row, player.col, -1, player)
+        
+
+    } else {
+        // lépés
+        showAvailableRooms(arrPlayers[turn].row, arrPlayers[turn].col, -1, arrPlayers[turn])
+        turn = turn + 1 < player ? turn + 1 : 0
+        turnPart = 0
+    }
+
+
 }
 
 function showAvailableNeighbours(row, col) {
@@ -444,7 +430,7 @@ function showAvailableNeighbours(row, col) {
     return path
 }
 
-function getAvailableRooms(row, col, from) {
+/*function getAvailableRooms(row, col, from) {
     //if (from == null)
     //    from = 0
     // rekurzív hívás
@@ -471,7 +457,7 @@ function getAvailableRooms(row, col, from) {
         }
         newArr.push(actual)
         return newArr
-}
+}*/
 
 function showAvailableRooms(row, col, from, player) {
     const ways = getRoom(row, col).getWays()
@@ -604,17 +590,11 @@ function pushRoom(event) {
         }
         newSeparate.setPosition(-1, -1)
     }
+    turnPart++
     showBoard()
 }
 
 function showGold(playerId) {
-    /*for (let e of arrRooms) {
-        if (e.gold == playerId) {
-            const divGold = document.createElement('div')
-            divGold.classList.add('gold')
-            main.querySelector('#game #board').querySelectorAll('.row')[e.row].querySelectorAll('.room')[e.col].appendChild(divGold)
-        }
-    }*/
     for (let e of arrGolds) {
         if (e.playerId == playerId) {
             const divGold = document.createElement('div')
