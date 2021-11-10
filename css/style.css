@@ -1,9 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 body {
   font-family: 'Inter', sans-serif;
-  font-size: 20px;
+  font-size: 17px;
   background-color: #252525;
   color: white;
+  text-align: center;
+}
+
+label {
+  font-size: 14px;
+  float: left;
 }
 
 #main {
@@ -16,19 +22,18 @@ body {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  -ms-grid-columns: 1fr 1fr;
-      grid-template-columns: 1fr 1fr;
 }
 
-#game {
-  display: block;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  clear: right;
+#main #divSepar {
+  text-align: left !important;
+}
+
+#main #separRoom {
+  border-radius: 10px;
+  width: 70px;
+  height: 70px;
+  background-size: cover;
+  margin-left: 300px !important;
 }
 
 #board .row {
@@ -101,13 +106,6 @@ body {
   height: 70px;
 }
 
-#separRoom {
-  border-radius: 10px;
-  width: 70px;
-  height: 70px;
-  background-size: cover;
-}
-
 .availablePath {
   cursor: pointer;
   -webkit-box-shadow: inset 0 0 4px 4px magenta;
@@ -115,22 +113,28 @@ body {
 }
 
 button {
-  background-color: #008cff;
+  background-color: #006eff;
   border: 0;
   color: white;
-  min-width: 200px;
+  width: 210px;
   padding: 10px 15px 10px 15px;
   border-radius: 3px;
   -webkit-transition: 0.2s;
   transition: 0.2s;
   font-size: 17px;
+  margin-bottom: 15px;
 }
 
 button:hover {
   cursor: pointer;
-  background-color: #0078ff;
+  background-color: #005aff;
   -webkit-transition: 0.2s;
   transition: 0.2s;
+}
+
+button:disabled {
+  background-color: #68afff;
+  cursor: default;
 }
 
 input {
@@ -138,6 +142,11 @@ input {
   border: 0;
   border-radius: 3px;
   -webkit-transition: 0.1s;
+  transition: 0.1s;
+  padding: 10px 15px 10px 15px;
+  width: 200px;
+  margin-top: 5px;
+  margin-bottom: 20px;
   transition: 0.1s;
 }
 

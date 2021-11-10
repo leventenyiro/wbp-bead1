@@ -38,7 +38,11 @@ function startScreen() {
     inputPlayers.value = 2
     labelInputPlayers.htmlFor = inputPlayers
     divSettings.appendChild(labelInputPlayers)
+    divSettings.appendChild(document.createElement('br'))
     divSettings.appendChild(inputPlayers)
+
+    divSettings.appendChild(document.createElement('br'))
+
 
     // játékosokként hány kincskártya beállítása
     const labelInputNumberCards = document.createElement('label')
@@ -47,9 +51,12 @@ function startScreen() {
     inputNumberCards.type = 'number'
     inputNumberCards.min = 1
     inputNumberCards.value = 1
+    inputNumberCards.max = 24 / inputPlayers.value
     labelInputPlayers.htmlFor = inputNumberCards
     divSettings.appendChild(labelInputNumberCards)
+    divSettings.appendChild(document.createElement('br'))
     divSettings.appendChild(inputNumberCards)
+    divSettings.appendChild(document.createElement('br'))
 
     // event
     inputPlayers.addEventListener('change', (e) => {
@@ -69,6 +76,7 @@ function startScreen() {
         showBoard()
     })
     divSettings.appendChild(btnStartGame);
+    divSettings.appendChild(document.createElement('br'))
 
     // btnLoadGame
     const btnLoadGame = document.createElement('button')
@@ -76,6 +84,7 @@ function startScreen() {
     btnLoadGame.addEventListener('click', loadGame)
     btnLoadGame.disabled = window.localStorage.length == 0
     divSettings.appendChild(btnLoadGame);
+    divSettings.appendChild(document.createElement('br'))
 
     // leírás
     const btnDesc = document.createElement('button')
@@ -230,23 +239,21 @@ function startGame() {
     divSeparRoom.classList.add('room')
     divSeparRoom.id = 'separRoom'
     divSepar.appendChild(divSeparRoom)
+    divSepar.appendChild(document.createElement('br'))
 
     // btnBalra
     const btnLeft = document.createElement('button')
     btnLeft.innerHTML = 'Balra'
     btnLeft.addEventListener('click', rotateLeft)
     divSepar.appendChild(btnLeft);
+    divSepar.appendChild(document.createElement('br'))
 
     // btnJobbra
     const btnRight = document.createElement('button')
     btnRight.innerHTML = 'Jobbra'
     btnRight.addEventListener('click', rotateRight)
     divSepar.appendChild(btnRight);
-
-    // labelRotate
-    const labelRotate = document.createElement('label')
-    labelRotate.innerHTML = 'Forgatás'
-    divSepar.appendChild(labelRotate)
+    divSepar.appendChild(document.createElement('br'))
 
     game.appendChild(divSepar)
     main.appendChild(game)
@@ -258,6 +265,9 @@ function startGame() {
 }
 
 function initNewGame() {
+    turn = 0
+    turnPart = 0
+
     // random szobák generálása
     randomRooms()
 
@@ -569,26 +579,25 @@ function showGold(playerId) {
     }
 }
 
-function getFoundGolds(playerId) {
+function getFoundGolds(player) {
     let goldsOfPlayer = 0
     for (let e of arrGolds) {
-        if (e.playerId == playerId)
+        if (e.playerId == player.id)
             goldsOfPlayer++
     }
     return numberCards - goldsOfPlayer
 }
 
 function showInfo() {
-
     const info = document.querySelector('#info')
     info.innerHTML = ''
     const divPlayers = document.createElement('div')
     divPlayers.id = 'divPlayers'
-    for (let i = 0; i < numberPlayer; i++) {
+    for (let e of arrPlayers) {
         const divPlayer = document.createElement('div')
         divPlayer.innerHTML = `
-            <h2>Player ${i + 1}</h2>
-            <p>Found ${getFoundGolds(i)} / ${numberCards}</p>
+            <h2 style='color:${e.getColor()}'>${getHungarianColorName(e.getColor())} játékos</h2>
+            <p>Found ${getFoundGolds(e)} / ${numberCards}</p>
         `
         divPlayers.appendChild(divPlayer)
     }
@@ -601,6 +610,7 @@ function showInfo() {
     btnSave.innerHTML = 'Mentés és kilépés'
     btnSave.addEventListener('click', saveGame)
     divSettings.appendChild(btnSave)
+    divSettings.appendChild(document.createElement('br'))
 
     const btnNewGame = document.createElement('button')
     btnNewGame.innerHTML = 'Új játék'
@@ -612,7 +622,7 @@ function showInfo() {
 
 function isWon() {
     for (let e of arrPlayers) {
-        if (e.row == arrRooms[e.id].row && e.col == arrRooms[e.id].col && getFoundGolds(e.id) == numberCards) {
+        if (e.row == arrRooms[e.id].row && e.col == arrRooms[e.id].col && getFoundGolds(e) == numberCards) {
             console.log('nyert');
             turnPart = 2
             showWin(e)
@@ -620,23 +630,17 @@ function isWon() {
     }
 }
 
-function showWin(player) {
-    let str = ''
-    switch (player.getColor()) {
-        case 'red':
-            str += 'Piros'
-            break;
-        case 'blue':
-            str += 'Kék'
-            break;
-        case 'green':
-            str += 'Zöld'
-            break;
-        default:
-            str += 'Lila'
-            break;
+function getHungarianColorName(color) {
+    switch (color) {
+        case 'red': return 'Piros'
+        case 'blue': return 'Kék'
+        case 'green': return 'Zöld'
+        default: return 'Lila'
     }
-    str += ' játékos nyert!'
+}
+
+function showWin(player) {
+    let str = `${getHungarianColorName(player.getColor())} játékos nyert!`
     alert(str)
     startScreen()
 }

@@ -2,38 +2,37 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    font-size: 20px;
+    font-size: 17px;
     background-color: rgb(37, 37, 37);
-    color: white
+    color: white;
+    text-align: center;
 }
 
-h1 {
-
-}
-
-#settings {
-    // itt valami rend
+label {
+    font-size: 14px;
+    float: left;
 }
 
 #main {
     display: flex;
     align-items: center;
     justify-content: center;
-    grid-template-columns: 1fr 1fr;
-}
 
-#game {
-    display: block;
-    align-items: center;
-    justify-content: center;
-    clear: right;
+    #divSepar {
+        text-align: left !important;
+    }
+
+    #separRoom {
+        border-radius: 10px;
+        width: 70px;
+        height: 70px;
+        background-size: cover;
+        margin-left: 300px !important;
+    }
 }
 
 #board {
     .row {
-        //width: 100px;
-        //height: 100px;
-        //position: relative;
         display: flex;
 
         div {
@@ -44,8 +43,6 @@ h1 {
     }
 
     .room {
-        //background-color: red;
-        //border: 1px solid black;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -74,8 +71,6 @@ h1 {
         background-repeat: no-repeat;
         background-size: contain;
         opacity: 20%;
-        //transform: rotate(270deg);
-        //background-color: green;
     }
 
     .arrowEnabled {
@@ -95,39 +90,43 @@ h1 {
     }
 }
 
-#separRoom {
-    border-radius: 10px;
-    width: 70px;
-    height: 70px;
-    background-size: cover;
-}
-
 .availablePath {
     cursor: pointer;
     box-shadow: inset 0 0 4px 4px magenta;
 }
 
 button {
-    background-color: rgb(0, 140, 255);
+    background-color: rgb(0, 110, 255);
     border: 0;
     color: white;
-    min-width: 200px;
+    width: 210px;
     padding: 10px 15px 10px 15px;
     border-radius: 3px;
     transition: 0.2s;
     font-size: 17px;
+    margin-bottom: 15px;
 }
 
 button:hover {
     cursor: pointer;
-    background-color: rgb(0, 120, 255);
+    background-color: rgb(0, 90, 255);
     transition: 0.2s;
+}
+
+button:disabled {
+    background-color: rgb(104, 175, 255);
+    cursor: default;
 }
 
 input {
     font-size: 17px;
     border: 0;
     border-radius: 3px;
+    transition: 0.1s;
+    padding: 10px 15px 10px 15px;
+    width: 200px;
+    margin-top: 5px;
+    margin-bottom: 20px;
     transition: 0.1s;
 }
 
