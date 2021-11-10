@@ -399,7 +399,7 @@ function showBoard() {
         }
     } else {
         // lépés
-        showAvailableRooms(arrPlayers[turn].row, arrPlayers[turn].col, -1, arrPlayers[turn])
+        showAvailableRooms(arrPlayers[turn].row, arrPlayers[turn].col, arrPlayers[turn])
     }
 }
 
@@ -413,30 +413,38 @@ function deleteGold() {
     }
 }
 
-function showAvailableRooms(row, col, from, player) {
+// available rooms
+arrAvailableRooms = []
+function getAvailableRooms(row, col, player) {
     const ways = getRoom(row, col).getWays()
     const actual = getRoom(row, col)
-    if (from != 0 && ways.includes(0) && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2))
-        showAvailableRooms(row - 1, col, 2, player)
-    if (from != 1 && ways.includes(1) && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3))
-        showAvailableRooms(row, col + 1, 3, player)
-    if (from != 2 && ways.includes(2) && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0))
-        showAvailableRooms(row + 1, col, 0, player)
-    if (from != 3 && ways.includes(3) && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1))
-        showAvailableRooms(row, col - 1, 1, player)
-    
-    // műveletek
-    const room = document.querySelector('#game #board').querySelectorAll('.row')[actual.row + 1].querySelectorAll('.room')[actual.col]
-    room.classList.add('availablePath')
-    room.addEventListener('click', () => {
-        player.setPosition(row, col)
-        deleteGold()
-        showInfo()
-        turn = turn + 1 < numberPlayer ? turn + 1 : 0
-        turnPart = 0
-        showBoard()
-        isWon() // nyert-e valaki
-    })
+    arrAvailableRooms.push(actual)
+    if (ways.includes(0) && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2) && !arrAvailableRooms.includes(getRoom(row - 1, col)))
+        getAvailableRooms(row - 1, col, 2, player)
+    if (ways.includes(1) && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3) && !arrAvailableRooms.includes(getRoom(row, col + 1)))
+        getAvailableRooms(row, col + 1, 3, player)
+    if (ways.includes(2) && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0) && !arrAvailableRooms.includes(getRoom(row + 1, col)))
+        getAvailableRooms(row + 1, col, 0, player)
+    if (ways.includes(3) && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1) && !arrAvailableRooms.includes(getRoom(row, col - 1)))
+        getAvailableRooms(row, col - 1, 1, player)
+}
+
+function showAvailableRooms(row, col, player) {
+    arrAvailableRooms = []
+    getAvailableRooms(row, col, player)
+    for (let e of arrAvailableRooms) {
+        const room = document.querySelector('#game #board').querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col]
+        room.classList.add('availablePath')
+        room.addEventListener('click', () => {
+            player.setPosition(e.row, e.col)
+            deleteGold()
+            showInfo()
+            turn = turn + 1 < numberPlayer ? turn + 1 : 0
+            turnPart = 0
+            showBoard()
+            isWon()
+        })
+    }
 }
 
 // rotate
@@ -513,7 +521,6 @@ function pushRoom(event) {
         for (let i = 0; i < 7; i++) {
             const room = rooms[i]
             arrRooms[room.dataset.id].setPosition(parseInt(e.row), i + multiply)
-            //room.style.transition = '2s'
         }
 
         // játékos tolása
