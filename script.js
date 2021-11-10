@@ -99,15 +99,18 @@ function desc() {
     // startScreen törlése, majd újrameghívása
     main.innerHTML = ''
     const divDesc = document.createElement('div')
+    divDesc.id = 'desk'
     divDesc.innerHTML = `<h1>A játék leírása</h1>
     <p>A <b>katakomba</b> szobáit egy 7x7-es négyzetrács cellái jelképezik. Minden szobában adott, hogy hány falán van ajtó. Ha két szomszédos szoba érintkező falán egy-egy ajtó van, akkor át lehet menni egyik szobából a másikba. A négyzetrács páros sorait és oszlopait el lehet tolni, a többi szoba végig rögzített a játék során. Az eltolásokkal az ajtókon keresztül utak nyílnak a szobák között, így lehet eljutni a kincsekhez. Mindegyik kérő arra törekszik, hogy a katakomba szobáinak ötletes eltolásával eljusson a kincsekhez. Aki elsőként találja meg mindahányat és kiindulópontjára sikeresen visszaérkezik az a nyertes.</p>`
-    main.appendChild(divDesc)
 
+    divDesc.appendChild(document.createElement('br'))
     // btnBack
     const btnBack = document.createElement('button')
     btnBack.innerHTML = 'Vissza'
     btnBack.addEventListener('click', startScreen)
-    main.appendChild(btnBack);
+    divDesc.appendChild(btnBack);
+
+    main.appendChild(divDesc)
 }
 
 class Room {

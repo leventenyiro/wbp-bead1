@@ -6,11 +6,19 @@ body {
     background-color: rgb(37, 37, 37);
     color: white;
     text-align: center;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 label {
     font-size: 14px;
     float: left;
+}
+
+#desc {
+    text-align: justify !important;
+    background-color: red !important;
 }
 
 #main {

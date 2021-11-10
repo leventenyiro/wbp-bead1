@@ -5,6 +5,9 @@ body {
   background-color: #252525;
   color: white;
   text-align: center;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 label {
@@ -155,4 +158,3 @@ input:focus {
   -webkit-transition: 0.1s;
   transition: 0.1s;
 }
-/*# sourceMappingURL=style.css.map */
