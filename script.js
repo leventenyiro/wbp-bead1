@@ -191,11 +191,10 @@ class Gold {
     }
 }
 
-function getGold(row, col) { // ez lehetne egyesíteni a másik keresőssel
-    for (let e of arrGolds) {
-        if (e.row == row && e.col == col) {
+function getGameElement(arr, row, col) {
+    for (let e of arr) {
+        if (e.row == row && e.col == col)
             return e
-        }
     }
     return null
 }
@@ -270,6 +269,7 @@ function startGame() {
 function initNewGame() {
     turn = 0
     turnPart = 0
+    prevPush = {row: -1, col: -1}
 
     // random szobák generálása
     randomRooms()
@@ -326,7 +326,7 @@ function randomRooms() {
     
     for (let i = 0; i < 7; i++) {
         for (let j = 0; j < 7; j++) {
-            if (getRoom(i, j) == null) {
+            if (getGameElement(arrRooms, i, j) == null) {
                 let rndType = random(0, 2)
                 while (types[rndType] == 0) {
                     rndType = random(0, 2)
@@ -344,7 +344,7 @@ function randomGolds() {
     for (let i = 0; i < numberPlayer; i++) {
         for (let j = 0; j < numberCards; j++) {
             let rndRoom = random(4, 48)
-            while (getGold(arrRooms[rndRoom].row, arrRooms[rndRoom].col) != null) {
+            while (getGameElement(arrGolds, arrRooms[rndRoom].row, arrRooms[rndRoom].col) != null) {
                 rndRoom = random(4, 48)
             }
             arrGolds.push(new Gold(i, arrRooms[rndRoom].row, arrRooms[rndRoom].col))
@@ -354,14 +354,6 @@ function randomGolds() {
 
 function random(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function getRoom(row, col) {
-    for (let e of arrRooms) {
-        if (e.row === row && e.col === col)
-            return e
-    }
-    return null
 }
 
 function showBoard() {
@@ -429,16 +421,16 @@ function deleteGold() {
 // available rooms
 arrAvailableRooms = []
 function getAvailableRooms(row, col, player) {
-    const ways = getRoom(row, col).getWays()
-    const actual = getRoom(row, col)
+    const actual = getGameElement(arrRooms, row, col)
+    const ways = actual.getWays()
     arrAvailableRooms.push(actual)
-    if (ways.includes(0) && row - 1 >= 0 && getRoom(row - 1, col).getWays().includes(2) && !arrAvailableRooms.includes(getRoom(row - 1, col)))
+    if (ways.includes(0) && row - 1 >= 0 && getGameElement(arrRooms, row - 1, col).getWays().includes(2) && !arrAvailableRooms.includes(getGameElement(arrRooms, row - 1, col)))
         getAvailableRooms(row - 1, col, 2, player)
-    if (ways.includes(1) && col + 1 <= 6 && getRoom(row, col + 1).getWays().includes(3) && !arrAvailableRooms.includes(getRoom(row, col + 1)))
+    if (ways.includes(1) && col + 1 <= 6 && getGameElement(arrRooms, row, col + 1).getWays().includes(3) && !arrAvailableRooms.includes(getGameElement(arrRooms, row, col + 1)))
         getAvailableRooms(row, col + 1, 3, player)
-    if (ways.includes(2) && row + 1 <= 6 && getRoom(row + 1, col).getWays().includes(0) && !arrAvailableRooms.includes(getRoom(row + 1, col)))
+    if (ways.includes(2) && row + 1 <= 6 && getGameElement(arrRooms, row + 1, col).getWays().includes(0) && !arrAvailableRooms.includes(getGameElement(arrRooms, row + 1, col)))
         getAvailableRooms(row + 1, col, 0, player)
-    if (ways.includes(3) && col - 1 >= 0 && getRoom(row, col - 1).getWays().includes(1) && !arrAvailableRooms.includes(getRoom(row, col - 1)))
+    if (ways.includes(3) && col - 1 >= 0 && getGameElement(arrRooms, row, col - 1).getWays().includes(1) && !arrAvailableRooms.includes(getGameElement(arrRooms, row, col - 1)))
         getAvailableRooms(row, col - 1, 1, player)
 }
 
@@ -469,13 +461,13 @@ document.addEventListener('keydown', (event) => {
 })
 
 function rotateLeft() {
-    const separ = getRoom(-1, -1)
+    const separ = getGameElement(arrRooms, -1, -1)
     separ.setRotate(separ.rot == 0 ? 3 : separ.rot - 1)
     showBoard()
 }
 
 function rotateRight() {
-    const separ = getRoom(-1, -1)
+    const separ = getGameElement(arrRooms, -1, -1)
     separ.setRotate(separ.rot == 3 ? 0 : separ.rot + 1)
     showBoard()
 }
@@ -512,8 +504,8 @@ function pushRoom(event) {
             }
         }
         
-        getRoom(-1, -1).setPosition(multiply == 1 ? 0 : 6, parseInt(e.col))
-        const newSeparate = getRoom(multiply == 1 ? 7 : -1, parseInt(e.col))
+        getGameElement(arrRooms, -1, -1).setPosition(multiply == 1 ? 0 : 6, parseInt(e.col))
+        const newSeparate = getGameElement(arrRooms, multiply == 1 ? 7 : -1, parseInt(e.col))
         // játékos tolása
         for (let p of arrPlayers) {
             if (p.row == newSeparate.row && p.col == newSeparate.col)
@@ -552,8 +544,8 @@ function pushRoom(event) {
             }
         }
         
-        getRoom(-1, -1).setPosition(parseInt(e.row), multiply == 1 ? 0 : 6)
-        const newSeparate = getRoom(parseInt(e.row), multiply == 1 ? 7 : -1)
+        getGameElement(arrRooms, -1, -1).setPosition(parseInt(e.row), multiply == 1 ? 0 : 6)
+        const newSeparate = getGameElement(arrRooms, parseInt(e.row), multiply == 1 ? 7 : -1)
         // játékos letolása
         for (let p of arrPlayers) {
             if (p.row == newSeparate.row && p.col == newSeparate.col) {
@@ -662,7 +654,7 @@ function saveGame() {
     startScreen()
 }
 
-function loadGame(event) {
+function loadGame() {
     startGame()
     saveStorage = window.localStorage
     turn = parseInt(saveStorage.getItem('turn'))
