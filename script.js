@@ -300,7 +300,7 @@ function initRooms() {
                     div.dataset.col = j - 1
                 } else if (j == 0) {
                     div.style.transform = 'rotate(90deg)'
-                    div.dataset.row = i -1
+                    div.dataset.row = i - 1
                     div.dataset.col = 0
                 } else if (j == 8) {
                     div.style.transform = 'rotate(270deg)'
@@ -388,7 +388,6 @@ function showBoard() {
         }
         divPlayer.style.backgroundColor = e.color
         var room = board.querySelectorAll('.row')[e.row + 1].querySelectorAll('.room')[e.col]
-        room.innerHTML = ''
         room.appendChild(divPlayer)
     }
     if (turnPart == 0) {
@@ -411,7 +410,6 @@ function showBoard() {
 function deleteGold() {
     for (let e of arrGolds) {
         if (e.playerId == turn && arrPlayers[turn].row == e.row && arrPlayers[turn].col == e.col) {
-            console.log('törölve');
             arrGolds.splice(arrGolds.indexOf(e) , 1)
             break;
         }
@@ -618,7 +616,6 @@ function showInfo() {
 function isWon() {
     for (let e of arrPlayers) {
         if (e.row == arrRooms[e.id].row && e.col == arrRooms[e.id].col && getFoundGolds(e) == numberCards) {
-            console.log('nyert');
             turnPart = 2
             showWin(e)
         }
